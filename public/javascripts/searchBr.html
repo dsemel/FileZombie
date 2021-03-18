@@ -1,0 +1,197 @@
+
+<html>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
+
+<script type = "text/javascript">
+
+    $(document).ready(function() {
+
+
+
+
+
+
+        $("#findBook").autocomplete({
+
+
+
+            minLength: 0,
+            scroll: true,
+
+            focus: function (event, ui) {
+                event.preventDefault();
+            },
+
+            source: function (request, response) {
+
+
+
+                $.ajax({
+                    method: "GET",
+                    dataType: "json",
+                    url: "https://www.googleapis.com/books/v1/volumes?q=" + request.term + "&printType=books",
+
+
+                    success: function (data) {
+
+                        var transformed = data.items.map(function (book) {
+                            if(book.volumeInfo.title !== undefined &&
+                                book.volumeInfo.authors !== undefined) {
+
+
+                                return {
+                                    title: book.volumeInfo.title,
+                                    author: book.volumeInfo.authors,
+                                    image: book.volumeInfo.imageLinks.thumbnail
+                                };
+                            }
+                        });
+
+
+
+                        response(transformed.slice(0, 5));
+                    }
+
+
+                });
+
+
+            },
+
+
+            select: function(event, ui){
+
+
+
+
+                event.preventDefault();
+
+
+
+
+                var id = ui.item.title;
+                var author = ui.item.author;
+
+                $.ajax({
+                    url: "/book_profile/" + id + "&" + author,
+                    type: "POST",
+                    dataType: 'html',
+                    data: {id: id},
+                    success: function (data) {
+
+
+                        post('/book_profile/' + id + "&" + author);
+
+
+
+
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+
+
+
+                        console.log(xhr.responseText + " - " + thrownError)
+                        alert("ERROR:" + xhr.responseText + " - " + thrownError);
+                    }
+                });
+
+            }
+
+
+
+
+
+
+
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li></li>")
+
+                .data("item.autocomplete", item)
+                .append("<a><img class= 'imageClass' src='" + item.image + "' />" + item.title +  " " + "<div class=searchInfo>"  + "by" + " " + item.author + "</div>" + "</a>")
+                .appendTo(ul)
+            // .append('<li><a href="/book_profile/b/'+ this.term + '">Search: '+ this.term + '</a></li>' );
+
+
+
+
+
+        };
+
+
+        var render = $('#findBook').autocomplete('instance')._renderMenu;
+
+        $('#findBook').autocomplete('instance')._renderMenu = function(ul, items) {
+
+
+
+
+
+
+            $.ui.autocomplete.prototype._renderMenu.apply( this, [ul, items] );
+            ul.append( '<li><a class="postData">See all results: '+ this.term + '</a></li>' );
+
+            var valueToPass = this.term;
+
+            $('.postData').click(function(e){
+
+
+                var x =0;
+
+
+                $.ajax({
+                    url: "/book_results/" + valueToPass,
+                    type: "POST",
+                    dataType: 'html',
+                    data: {id: valueToPass},
+                    success: function (data) {
+
+
+                        post('/book_results/' + valueToPass);
+
+
+
+
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+
+                        console.log(xhr.responseText + " - " + thrownError)
+                        alert("ERROR:" + xhr.responseText + " - " + thrownError);
+                    }
+                });
+
+            });
+        };
+
+
+
+
+    });
+
+</script>
+
+
+<body>
+
+
+<div class="searchBook">
+
+    <h1>
+        File Zombie
+    </h1>
+
+    <h2>1st iteration</h2>
+    <h3>search for books</h3>
+
+    <input type="text" placeholder="Title/ Author/ ISBN" id="findBook" />
+
+
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" href="/style.css" type="text/css">
+<link rel="stylesheet" href="/home.css" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|EB+Garamond|Encode+Sans+Expanded|Inconsolata|Karla|Manuale|Nunito+Sans|Pontano+Sans|Roboto+Slab:300|Rokkitt|Sanchez" rel="stylesheet">
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
+
+<script type="text/javascript" src="/javascripts/postNewPage.js"></script>
+
+<script type="text/javascript" src="/javascripts/footer.js"></script>
+
+<head>
+    <title>FileZombie</title>
+
+
+
+
+
+</head>
+<body>
+
+
+<h1></h1>
+
+
+
+<div class = "front-page">
+
+    <a href="/home">home</a>
+
+    <div id="nav"></div>
+
+    <div id="seeResults">
+
+        <h1>search results for " <%= bookSearchTerm%> "</h1>
+
+
+
+
+        <%books.forEach(function(b) { %>
+
+        <% if (b.volumeInfo.title !== undefined && b.volumeInfo.authors !== undefined) { %>
+
+        <form id="fiction" method="get" action= "/book_profile/<%=b.volumeInfo.title%>&<%=b.volumeInfo.authors%>">
+
+
+
+
+            <input id="book-image_search" type="image"
+                   src =  <%=b.volumeInfo.imageLinks === undefined ? " " : b.volumeInfo.imageLinks.thumbnail   %> >
+
+
+
+
+
+        </form>
+
+            <% }%>
+
+
+        <%}); %>
+
+
+
+    </div>
+
+
+    <div id="pagination">
+        <% if (pageCount > 1) { %>
+        <ul class="pagination">
+            <% if (currentPage > 1) { %>
+            <li><a href="?page=1">&laquo;</a></li>
+            <% } %>
+            <% var i = 1;
+                if (currentPage > 5) {
+                    i = +currentPage - 4;
+                } %>
+            <% if (i !== 1) { %>
+            <li><a href="#">...</a></li>
+            <% } %>
+            <% for (i; i<=pageCount; i++) { %>
+            <% if (currentPage == i) { %>
+            <li class="active"><span><%= i %> <span class="sr-only">(current)</span></span></li>
+            <% } else { %>
+            <li><a href="?page=<%= i %>"><%= i %></a></li>
+            <% } %>
+
+            <% if (i == (+currentPage + 4)) { %>
+            <li><a href="#">...</a></li>
+            <% break; } %>
+            <% } %>
+            <% if (currentPage != pageCount) { %>
+            <li><a href="?page=<%= pageCount %>">&raquo;</a></li>
+            <% } %>
+        </ul>
+        <% } %>
+    </div>
+
+
+
+</div>
+
+
+<div id = "footer">
+
+</div>
+
+
+<!-- Your web-app is https, so your scripts need to be too -->
+<script src="https://code.jquery.com/jquery-2.2.1.min.js"
+        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+        crossorigin="anonymous"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+<!--<script src="/public/javascripts/shorten.js"></script> -->
+</body>
+</html>

@@ -1,0 +1,106 @@
+body {
+  padding: 50px;
+
+  font-family: 'Encode Sans Expanded', sans-serif;
+}
+
+head{
+
+  font-family: 'Encode Sans Expanded', sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.imageClass{
+    width:50px;
+    height:50px;
+    padding: 3px;
+
+}
+
+.front-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 1.5rem;
+    justify-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+.searchInfo{
+
+    padding: 0px 0px 0px 58px;
+
+}
+
+
+.ui-autocomplete {
+    max-height: 250px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding to account for vertical scrollbar */
+    padding-right: 20px;
+    width: 500px;
+    text-align: left;
+
+    z-index:1000 !important;
+
+
+
+}
+
+.ui-menu-item {
+    margin: 0;
+    padding: 0;
+    zoom: 1;
+    float: left;
+    clear: left;
+    width: 500px;
+
+}
+
+ul li:not(:first-child) { border-top: 1px #ccc solid;  }
+
+.ui-menu-item a {
+
+    text-decoration: none;
+    display: block;
+    padding: .2em .4em;
+    line-height: 1.5;
+    zoom: 1;
+    max-width:100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ui-menu-item:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
+.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus, .ui-state-active {
+
+    background: lightgray;
+    border: none;
+    color:#000;
+    border-radius:0;
+    font-weight: normal;
+
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+
+    background: lightgray;
+    border: none;
+    color:#000;
+    border-radius:0;
+    font-weight: normal;
+}
+

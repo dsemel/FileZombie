@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
+
+    <script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
+
+    <script type="text/javascript" src="/javascripts/postNewPage.js"></script>
+
+    <script type="text/javascript" src="/javascripts/footer.js"></script>
+
+    <title>FileZombie</title>
+
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+
+
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="/style.css" type="text/css">
+    <link rel="stylesheet" href="/home.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|EB+Garamond|Encode+Sans+Expanded|Inconsolata|Karla|Manuale|Nunito+Sans|Pontano+Sans|Roboto+Slab:300|Rokkitt|Sanchez" rel="stylesheet">
+
+
+
+</head>
+<body>
+
+<a href="/home">home</a>
+
+<div id="nav"></div>
+
+
+
+
+
+<h1>Book Profile Page</h1>
+
+
+
+<img src ="<%=book_image %>">
+
+<p>
+    <%=book_title%>
+    by <%=book_author%>
+</p>
+
+<p>
+
+    isbn-10 <%=book_isbnTen%>
+    isbn-13 <%=book_isbnThirteen%>
+    page count <%= book_pageCount%>
+    book type <%= book_printType%>
+
+
+</p>
+
+<p>
+<%=book_description%>
+</p>
+
+
+<div id = "footer">
+
+</div>
+
+<!-- Your web-app is https, so your scripts need to be too -->
+<script src="https://code.jquery.com/jquery-2.2.1.min.js"
+        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+        crossorigin="anonymous"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+<!--<script src="/public/javascripts/shorten.js"></script> -->
+</body>
+</html>
