@@ -3,8 +3,7 @@ var router = express.Router();
 
 
 var path = require('path');
-//var cookieParser = require('cookie-parser');
-//var logger = require('morgan');
+
 var bodyParser = require('body-parser');
 
 
@@ -15,8 +14,6 @@ var async = require('async');
 const fs = require('fs');
 
 
-//var homePageRouter = require('./routes/home');
-//var usersRouter = require('./routes/users');
 
 var dotenv = require('dotenv');
 dotenv.config();
@@ -30,20 +27,16 @@ app.use(bodyParser.urlencoded({ extended: true}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// view engine setup
+
 app.set('views', path.join(__dirname, '/views'));
-//app.set('view engine', 'jade');
+
 
 app.set('view engine', 'ejs');
 
-//app.use(logger('dev'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/home', homePageRouter);
-//app.use('/users', usersRouter);
 
 var tempArray = [];
 
@@ -95,11 +88,7 @@ router.all('/book_results/:encoded_id', function(req, response,err){
                 }
 
 
-                // var arr = JSON.stringify(tempArray);
 
-                //var arr1 = JSON.parse(arr);
-
-                //  response.redirect('/book_results_paginate/'+title_results+'/'+tempArray);
 
 
 
@@ -109,7 +98,7 @@ router.all('/book_results/:encoded_id', function(req, response,err){
 
                 var bookList = [];
 
-                //console.log(tempArray);
+
 
 
 
@@ -124,8 +113,7 @@ router.all('/book_results/:encoded_id', function(req, response,err){
 
 
 
-                //  req.app.locals.searchResultsArray = tempArray;
-                // response.redirect('/book_results_paginate/' + title_results)
+
 
                 const perPage = 10;
                 let currentPage = 1;
@@ -154,7 +142,7 @@ router.all('/book_results/:encoded_id', function(req, response,err){
                     pageCount: pageCount,
                     currentPage: currentPage});
 
-                //console.log(bookList = bookArray[1]);
+
             }
 
 
@@ -162,10 +150,7 @@ router.all('/book_results/:encoded_id', function(req, response,err){
 
         });
 
-    // var string = JSON.stringify(tempArray);
 
-
-    //response.redirect('/book_results_paginate/'+title_results);
 
 
 
