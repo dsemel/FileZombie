@@ -6,7 +6,7 @@
     "node": "8.11.3"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./bin/www"
 
   },
   "dependencies": {
