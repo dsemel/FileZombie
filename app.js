@@ -1,8 +1,14 @@
 //var createError = require('http-errors');
 var express = require('express');
+
+var app = express();
+
 var path = require('path');
-//var cookieParser = require('cookie-parser');
-//var logger = require('morgan');
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
 var bodyParser = require('body-parser');
 
 
@@ -13,8 +19,7 @@ var async = require('async');
 const fs = require('fs');
 
 
-//var homePageRouter = require('./routes/home');
-//var usersRouter = require('./routes/users');
+
 
 var dotenv = require('dotenv');
 dotenv.config();
@@ -28,20 +33,17 @@ app.use(bodyParser.urlencoded({ extended: true}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// view engine setup
 app.set('views', path.join(__dirname, '/views'));
-//app.set('view engine', 'jade');
+
 
 app.set('view engine', 'ejs');
 
-//app.use(logger('dev'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/home', homePageRouter);
-//app.use('/users', usersRouter);
+
+
 
 var apiKey = process.env.api_key;
 
@@ -50,14 +52,6 @@ var tempArray = [];
 // catch 404 and forward to error handler
 //app.use(function(req, res, next) {
 //  next(createError(404));
-//});
-
-
-
-//app.get("/home", function (request, response) {
-
-    //response.sendFile(__dirname + '/views/index.html');
-  //  response.render('home', {fiction: "hi"});
 //});
 
 
