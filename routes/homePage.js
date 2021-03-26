@@ -53,7 +53,7 @@ var apiKey = process.env.api_key;
 //});
 
 router.get('/', function(req,resp){
-    resp.render('/home', {books:"", nf_books:""});
+    resp.render('home', {books:"", nf_books:""});
 
    // resp.redirect('/home');
 });
