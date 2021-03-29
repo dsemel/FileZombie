@@ -44,18 +44,18 @@ var apiKey = process.env.api_key;
 
 /* GET home page. */
 
-//router.get('/', function(req,resp){
+router.get('/', function(req,resp){
+
+    resp.redirect('/home');
 
 
 
-
-
-//});
+});
 
 router.get('/', function(req,resp){
     resp.render('home', {books:"", nf_books:""});
 
-   // resp.redirect('/home');
+
 });
 
 
