@@ -168,6 +168,32 @@
 
 
 
+        $("#searchBtn").click(function(){
+            var str = $("#findBook").val();
+
+            $.ajax({
+                url: "/book_results/" + str,
+                type: "POST",
+                dataType: 'html',
+                data: {id: str},
+                success: function (data) {
+
+
+                    post('/book_results/' + str);
+
+
+
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+
+                    console.log(xhr.responseText + " - " + thrownError)
+                    alert("ERROR:" + xhr.responseText + " - " + thrownError);
+                }
+            });
+
+
+        });
 
     });
 
@@ -187,6 +213,7 @@
     <h3>search for books</h3>
 
     <input type="text" placeholder="Title/ Author/ ISBN" id="findBook" />
+    <button type="button" id="searchBtn">Search</button>
 
 
 

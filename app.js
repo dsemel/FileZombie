@@ -105,6 +105,13 @@ app.get('/privacy', function(req,resp){
 
 });
 
+app.get('/contact', function(req,resp){
+
+    resp.render('contact.ejs');
+
+
+});
+
 
 
 app.use(function(req,res){
