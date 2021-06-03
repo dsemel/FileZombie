@@ -1,7 +1,13 @@
 body {
-  padding: 50px;
+    padding: 50px;
+    font-family: 'Encode Sans Expanded', sans-serif;
 
-  font-family: 'Encode Sans Expanded', sans-serif;
+
+}
+
+p{
+    line-height: 2.0;
+    width: 50%;
 }
 
 head{
@@ -17,6 +23,10 @@ a {
     width:50px;
     height:50px;
     padding: 3px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    vertical-align: middle;
+    display: block;
 
 }
 
@@ -31,9 +41,14 @@ a {
 
 
 
-.searchInfo{
 
-    padding: 0px 0px 0px 58px;
+.searchInfo{
+    margin: 0px;
+    padding: 0px 0px 0px 0px;
+    font-size: 10px;
+
+
+
 
 }
 
@@ -52,6 +67,7 @@ a {
 
 
 
+
 }
 
 .ui-menu-item {
@@ -62,6 +78,9 @@ a {
     clear: left;
     width: 500px;
 
+
+
+
 }
 
 ul li:not(:first-child) { border-top: 1px #ccc solid;  }
@@ -69,7 +88,6 @@ ul li:not(:first-child) { border-top: 1px #ccc solid;  }
 .ui-menu-item a {
 
     text-decoration: none;
-    display: block;
     padding: .2em .4em;
     line-height: 1.5;
     zoom: 1;
@@ -77,6 +95,10 @@ ul li:not(:first-child) { border-top: 1px #ccc solid;  }
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+
 }
 
 .ui-menu-item:hover, .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
