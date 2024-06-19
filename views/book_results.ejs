@@ -35,23 +35,43 @@
 
 
 
-<div class = "front-page">
-
-    <a href="/home">home</a>
+<div class="header">
+    <div class="nav-left">
+        <a href="/home">Home</a>
+        <% if (userContext) { %>
+            <a class="nav-item nav-link" href="/profile">Profile</a>
+            <form method="POST" action="/logout">
+                <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
+            </form>
+        <% } else { %>
+            <a class="nav-item nav-link" href="/login">Log in/Register</a>
+        <% } %>
+        <div class="terms-privacy">
+            By logging in, or creating an account, you agree to FileZombie
+            <a href="/terms">Terms</a> /
+            <a href="/privacy">Privacy Policy</a>
+        </div>
+    </div>
 
     <div id="nav"></div>
 
-    <div id="seeResults">
+</div>
+<div class="content">
+    <div class="results-header">
 
         <h1>search results for " <%= bookSearchTerm%> "</h1>
 
 
+    </div>
 
+    <div class="results-list">
 
         <%books.forEach(function(b) { %>
 
         <% if (b.volumeInfo.title !== undefined && b.volumeInfo.authors !== undefined) { %>
 
+            <div class="result-item">
+                <div class="result-image">
         <form id="fiction" method="get" action= "/book_profile/<%=b.volumeInfo.title%>&<%=b.volumeInfo.authors%>">
 
 
@@ -61,10 +81,16 @@
                    src =  <%=b.volumeInfo.imageLinks === undefined ? " " : b.volumeInfo.imageLinks.thumbnail   %> >
 
 
-
+        </div>
 
 
         </form>
+                <div class="result-info">
+                    <h2 class="book-title"><%= b.volumeInfo.title %></h2>
+                    <p class="book-author">by <%= b.volumeInfo.authors.join(', ') %></p>
+                    <p class="book-description"><%= b.volumeInfo.description ? b.volumeInfo.description.substring(0, 200) + '...' : '' %></p>
+                </div>
+            </div>
 
             <% }%>
 
@@ -76,37 +102,13 @@
     </div>
 
 
-    <div id="pagination">
-        <% if (pageCount > 1) { %>
-        <ul class="pagination">
-            <% if (currentPage > 1) { %>
-            <li><a href="?page=1">&laquo;</a></li>
-            <% } %>
-            <% var i = 1;
-                if (currentPage > 5) {
-                    i = +currentPage - 4;
-                } %>
-            <% if (i !== 1) { %>
-            <li><a href="#">...</a></li>
-            <% } %>
-            <% for (i; i<=pageCount; i++) { %>
-            <% if (currentPage == i) { %>
-            <li class="active"><span><%= i %> <span class="sr-only">(current)</span></span></li>
-            <% } else { %>
-            <li><a href="?page=<%= i %>"><%= i %></a></li>
-            <% } %>
+    <div class="pagination">
 
-            <% if (i == (+currentPage + 4)) { %>
-            <li><a href="#">...</a></li>
-            <% break; } %>
-            <% } %>
-            <% if (currentPage != pageCount) { %>
-            <li><a href="?page=<%= pageCount %>">&raquo;</a></li>
-            <% } %>
-        </ul>
-        <% } %>
+
+        <a href="?page=<%= currentPage-1%>">Previous</a>
+        <a href="?page=<%=currentPage+1%>">Next</a>
+
     </div>
-
 
 
 </div>

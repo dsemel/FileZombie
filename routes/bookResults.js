@@ -50,6 +50,7 @@ router.get('/book_results', function(req,resp){
 });
 
 
+
 router.all('/book_results/:encoded_id', function(req, response,err){
 
 
@@ -60,7 +61,6 @@ router.all('/book_results/:encoded_id', function(req, response,err){
 
 
 
-    var count = 0;
 
 
 
@@ -71,79 +71,71 @@ router.all('/book_results/:encoded_id', function(req, response,err){
         console.log(err);
     }
 
+    const perPage = 10;
+    let currentPage = 1;
 
-    request("https://www.googleapis.com/books/v1/volumes?q=" + title_results +"&maxResults=40&printType=books" ,
+    if (req.query.page) {
+        currentPage = parseInt(req.query.page, 10);
+    }
+    const startIndex = (currentPage - 1) * perPage;
+
+
+
+    request("https://www.googleapis.com/books/v1/volumes?q=" + title_results +"&startIndex="+ startIndex + "&maxResults=" + perPage + "&printType=books" ,
         function (error, resp, data) {
-            if (!error) {
 
-                var gb_data2 = JSON.parse(data);
-
-                for(var i = 0; i< 40; i++){
-
-                    tempArray.push(gb_data2.items[i]);
-                    count++;
-
-
-
-                }
-
-
-
-
-
-
-                var bookArray = [];
-
-
-
-                var bookList = [];
-
-
-
-
-
-
-
-                if(err){
-
-                    console.log(err);
-                }
-
-
-
-
-
-
-
-                const perPage = 10;
-                let currentPage = 1;
-
-                const totalBookList = tempArray.length;
-
-                const pageCount = Math.ceil(totalBookList / perPage);
-
-                if(req.query.page){
-
-                    currentPage = parseInt(req.query.page, 10);
-                }
-
-                while(tempArray.length > 0){
-
-                    bookArray.push(tempArray.splice(0,perPage))
-
-                }
-
-                bookList = bookArray[+currentPage - 1];
-
-                const start = (currentPage - 1) * perPage;
-                const end = currentPage * perPage;
-
-                response.render('book_results', {books: bookList, bookSearchTerm: title_results,
-                    pageCount: pageCount,
-                    currentPage: currentPage});
-
-
+            if (error) {
+                console.log(error);
+                return response.status(500).send('Error fetching data from Google Books API');
             }
+
+
+
+
+
+            let gb_data2;
+            try {
+                gb_data2 = JSON.parse(data);
+            } catch (e) {
+                console.log('Error parsing JSON:', e);
+                return resp.status(500).send('Error parsing data from Google Books API');
+            }
+
+            if (!gb_data2 || !gb_data2.items) {
+                return response.render('book_results', {
+                    userContext: req.userContext,
+                    books: [],
+                    bookSearchTerm: title_results,
+                    pageCount: 0,
+                    currentPage: currentPage
+                });
+            }
+
+            const totalBookList = gb_data2.totalItems || 0;
+            const pageCount = Math.ceil(totalBookList / perPage);
+
+            console.log('pageCount:' + " "  + pageCount);
+
+            if (currentPage > pageCount) {
+                return resp.redirect(`/book_results/${title_results}&page=${pageCount}`);
+            }
+
+
+            var bookList = gb_data2.items;
+
+
+
+                  //  const {userContext} = req;
+
+
+                    response.render('book_results', {
+                        userContext: req.userContext, books: bookList, bookSearchTerm: title_results,
+                        pageCount: pageCount,
+                        currentPage: currentPage
+                    });
+
+
+
 
 
 

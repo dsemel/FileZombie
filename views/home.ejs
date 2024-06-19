@@ -20,6 +20,8 @@
 
     <script type="text/javascript" src="/javascripts/footer.js"></script>
 
+
+
     <!--<script src="/public/javascripts/shorten.js"></script> -->
     <title>FileZombie</title>
 
@@ -43,6 +45,29 @@
 
     </div> -->
 
+    <% if (userContext)  { %>
+        <a class="nav-item nav-link" href="/profile">Profile</a>
+        <br>
+        <br>
+        <form method="POST" action="/logout">
+            <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
+        </form>
+
+    <% } else { %>
+        <div class="login-container">
+            <a class="nav-item nav-link" href="/login">Log in/Register</a>
+            <div class="terms-text">
+                By logging in, or creating an account, you agree to FileZombie
+                <a href="/terms">Terms</a> /
+                <a href="/privacy">Privacy Policy</a>
+            </div>
+        </div>
+
+
+    <% }%>
+
+    <br>
+
     <div id="nav"></div>
 
 
@@ -52,43 +77,30 @@
 </div>
 
 
-<div class = "front-page">
 
 
-
-    <div class="fiction">
-
-      <h1>New York Times Best Sellers: Fiction</h1>
-
-        <%books.forEach(function(b) { %> <form id="fiction-image" method="post" action="book_profile/<%=b.title%>&<%=b.author%>">
-
-
-
-            <input id="book-image" type="image" src ="<%=b.book_image %>">
-
-        </form>
-
-
-          <%}); %>
-
-
+<div class="front-page">
+    <div class="book-section">
+        <h1>New York Times Best Sellers: Fiction</h1>
+        <div class="book-grid">
+            <% books.forEach(function(b) { %>
+                <form method="post" action="book_profile/<%= b.title %>&<%= b.author %>">
+                    <input type="image" class="book-image" src="<%= b.book_image %>" alt="<%= b.title %>">
+                </form>
+            <% }) %>
+        </div>
     </div>
 
-    <div id="nonfiction">
-
+    <div class="book-section">
         <h1>New York Times Best Sellers: Non-Fiction</h1>
-
-            <%nf_books.forEach(function(a) { %> <form method="post" action="book_profile/<%=a.title%>&<%=a.author%>">
-            <input id="book-image" type="image" src ="<%=a.book_image %>" ></form>
-
-            <%}); %>
-
-
+        <div class="book-grid">
+            <% nf_books.forEach(function(a) { %>
+                <form method="post" action="book_profile/<%= a.title %>&<%= a.author %>">
+                    <input type="image" class="book-image" src="<%= a.book_image %>" alt="<%= a.title %>">
+                </form>
+            <% }) %>
+        </div>
     </div>
-
-
-
-
 </div>
 
 

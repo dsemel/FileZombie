@@ -1,16 +1,25 @@
 //var createError = require('http-errors');
-var express = require('express');
+const express = require('express');
 
-var app = express();
+const app = express();
+
 
 var path = require('path');
+
+var alert = require('alert');
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
 var bodyParser = require('body-parser');
 
+var createError = require('http-errors');
+
+
+var logger = require('morgan');
+var session = require("express-session");
 
 var request = require('request');
 
@@ -18,26 +27,64 @@ var async = require('async');
 
 const fs = require('fs');
 
+var okta = require("@okta/okta-sdk-nodejs");
 
 
+const MemoryStore = require('memorystore')(session);
 
 var dotenv = require('dotenv');
 dotenv.config();
 
+
+
+
+
 var port = process.env.PORT || 3000;
 
-var app = express();
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(
+    require('express-session')({
+        secret: process.env.APP_SECRET,
+        resave: true,
+        saveUninitialized: false,
+        store: new MemoryStore({
+            checkPeriod: 86400000
+        })
+    })
+);
+
+const { ExpressOIDC } = require('@okta/oidc-middleware');
+const oidc = new ExpressOIDC({
+    appBaseUrl: process.env.HOST_URL,
+    issuer: `${process.env.OKTA_ORG_URL}/oauth2/default`,
+    client_id: process.env.OKTA_CLIENT_ID,
+    client_secret: process.env.OKTA_CLIENT_SECRET,
+    redirect_uri: `${process.env.HOST_URL}/callback`,
+    scope: 'openid profile',
+    routes: {
+        loginCallback: {
+            path: '/callback'
+        },
+    }
+});
+
+app.use(oidc.router);
+
+
 app.set('views', path.join(__dirname, '/views'));
 
 
-app.set('view engine', 'ejs');
 
+
+
+app.set('view engine', 'ejs');
+//app.set('view engine', 'hbs');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -64,25 +111,10 @@ var tempArray = [];
 
 
 
-var homePage = require('./routes/homePage.js');
+const homePage = require('./routes/homePage.js');
 
 app.use('/', homePage);
 
-var bookProfile = require('./routes/bookProfile.js');
-
-app.all('/book_profile/:encoded_id', bookProfile);
-
-
-var bookResults = require('./routes/bookResults.js');
-
-app.all('/book_results/:encoded_id', bookResults);
-
-app.get('/terms', function(req,resp){
-
-    resp.render('terms.ejs');
-
-
-});
 
 app.get('/authors', function(req,resp){
 
@@ -111,6 +143,78 @@ app.get('/contact', function(req,resp){
 
 
 });
+
+app.get('/terms', function(req,resp){
+
+    resp.render('terms.ejs');
+
+
+});
+
+//app.get('/profile', oidc.ensureAuthenticated(), function(req,resp){
+
+  //  const {userContext}  = req;
+
+    //console.log(userContext.userinfo.sub);
+
+
+    //resp.render('profile.ejs', {userContext, name: userContext.userinfo.given_name});
+
+
+//});
+
+
+const bookProfile = require('./routes/bookProfile.js');
+
+app.all('/book_profile/:encoded_id', bookProfile);
+
+var fileExpress = require('./routes/fileExpress.js');
+
+app.all('/fileExpress/:encoded_id', fileExpress);
+
+
+var bookResults = require('./routes/bookResults.js');
+
+app.all('/book_results/:encoded_id', bookResults);
+
+
+
+var redirectDisplayList = require('./routes/redirectDisplayList.js');
+
+app.post('/redirectDisplayList/:encoded_id', redirectDisplayList);
+
+var displayList = require('./routes/displayList.js');
+
+app.post('/display_list/', displayList);
+
+var remove_book_from_list = require('./routes/deleteBook.js');
+
+app.post('/deleteBook/:encoded_id', remove_book_from_list);
+
+var change_date_finished = require('./routes/changeDate.js');
+
+app.post('/changeDate/:encoded_id', change_date_finished);
+
+var view_User_Profile = require('./routes/profile.js');
+
+app.get('/profile', view_User_Profile);
+
+
+
+//var register = require('./routes/register');
+
+//app.all('/register', register);
+
+//app.use('/register', require('./routes/register'));
+
+
+
+
+
+
+
+
+
 
 
 

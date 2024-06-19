@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" href="/style.css" type="text/css">
+<link rel="stylesheet" href="/home.css" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|EB+Garamond|Encode+Sans+Expanded|Inconsolata|Karla|Manuale|Nunito+Sans|Pontano+Sans|Roboto+Slab:300|Rokkitt|Sanchez" rel="stylesheet">
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
+
+<script type="text/javascript" src="/javascripts/postNewPage.js"></script>
+
+<script type="text/javascript" src="/javascripts/footer.js"></script>
+
+<link rel="stylesheet" href="table-sortable.css" />
+<script src="jquery.slim.min.js"></script>
+<script src="table-sortable.js"></script>
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileZombie Book List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .pagination button {
+            padding: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="header">
+
+    <a href="/home">Home</a>
+    <% if (userContext)  { %>
+        <a class="nav-item nav-link" href="/profile">Profile</a>
+        <br>
+        <br>
+        <form method="POST" action="/logout">
+            <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
+        </form>
+
+    <% } else { %>
+        <div class="login-container">
+            <a class="nav-item nav-link" href="/login">Log in/Register</a>
+            <div class="terms-text">
+                By logging in, or creating an account, you agree to FileZombie
+                <a href="/terms">Terms</a> /
+                <a href="/privacy">Privacy Policy</a>
+            </div>
+        </div>
+
+    <% }%>
+
+    <br>
+
+    <div id="nav"></div>
+</div>
+
+
+<div class="content">
+
+    <h1><%= message%> </h1>
+    <div id="seeResults">
+
+
+
+
+
+
+
+
+        <table id="bookTable">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Book Image</th>
+                <th>Date Finished</th>
+                <th>Date Added</th>
+                <th>Remove</th>
+
+            </tr>
+            </thead>
+            <tbody id="bookTableBody">
+            <%list_books.forEach(function(b) { %>
+                <tr>
+                    <td><%= b.book_name %></td>
+                    <td><%= b.book_author %></td>
+                    <td>        <% if (b.book_name !== undefined && b.book_author !== undefined) { %>
+
+                        <form id="fiction" method="post" action= "/book_profile/<%=b.book_name%>&<%=b.book_author%>">
+
+
+
+
+                            <input id="book-image_search" type="image"
+                                   src =  <%=b.book_image === undefined ? " " : b.book_image   %> >
+
+
+
+
+
+                        </form>
+
+                        <% }%>
+
+
+                        </td>
+                    <td id="dateFinished-<%= b.book_name %>"><%= b.date_finished.toLocaleDateString() %>
+                        <form id="changeDateForm-<%= b.book_name %>" onsubmit="return changeDate('<%= listName %>', '<%= b.book_name %>');">
+                            <input type="date" name="newDate" id="newDateInput" required>
+                            <button type="submit">Change Date</button>
+                        </form>
+                    </td>
+                    <td><%= b.date_added.toLocaleDateString() %></td>
+                    <td>
+                        <form method="post" action="/deleteBook/<%=listName%>&<%=b.book_name%>"
+                              onsubmit="return confirm('Do you really want to remove the book?');">
+
+                            <button type="submit" class="btn btn-link nav-item nav-link">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+            </tbody>
+        </table>
+
+
+
+
+
+
+
+        <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="?page=1">First</a>
+                <a href="?page=<%= currentPage - 1 %>">Previous</a>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %>">Next</a>
+                <a href="?page=<%= totalPages %>">Last</a>
+            <% } %>
+        </div>
+
+    </div>
+</div>
+<div id = "footer">
+
+</div>
+
+<script>
+    function changeDate(listName, bookName) {
+        const form = document.getElementById(`changeDateForm-${bookName}`);
+        const formData = new FormData(form);
+        const newDate = formData.get('newDate');
+        if (confirm('Do you want to change date?')) {
+            $.ajax({
+                url: `/changeDate/${listName}&${bookName}`,
+                type: 'POST',
+                data: { newDate: newDate },
+                success: function(response) {
+                    if (response.success) {
+                        // Adjust the date to account for time zone differences
+                        const adjustedDate = new Date(newDate);
+                        adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset());
+                        // Update the date in the table and keep the form
+                        document.getElementById(`dateFinished-${bookName}`).innerHTML = `
+                        <div>${adjustedDate.toLocaleDateString()}</div>
+                        <form id="changeDateForm-${bookName}" onsubmit="return changeDate('${listName}', '${bookName}');">
+                            <input type="date" name="newDate" required>
+                            <button type="submit">Change Date</button>
+                        </form>`;
+                    } else {
+                        alert('Error updating date: ' + response.message);
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert('Error updating date: ' + xhr.responseText + ' - ' + thrownError);
+                }
+            });
+        }
+        return false; // Prevent the form from submitting the traditional way
+    }
+</script>
+
+
+</body>
+<!-- Your web-app is https, so your scripts need to be too -->
+<script src="https://code.jquery.com/jquery-2.2.1.min.js"
+        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+        crossorigin="anonymous"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js'></script>
+
+<link rel="stylesheet" href=
+"https://cdnjs.cloudflare.com/ajax/libs/Primer/0.0.0-20220329110403/primer.css">
+<!--<script src="/public/javascripts/shorten.js"></script> -->
+</html>

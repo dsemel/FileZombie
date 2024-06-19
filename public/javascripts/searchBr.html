@@ -109,17 +109,21 @@
 
         }).autocomplete("instance")._renderItem = function (ul, item) {
             return $("<li></li>")
-
                 .data("item.autocomplete", item)
-                .append("<a><img class= 'imageClass' src='" + item.image + "' />" + item.title + "<div class=searchInfo>" + "by" + " " + item.author + "</div>")
-                .appendTo(ul)
-            // .append('<li><a href="/book_profile/b/'+ this.term + '">Search: '+ this.term + '</a></li>' );
-
-
-
-
-
+                .append(
+                    $("<a></a>").append(
+                        $("<div></div>").addClass("item-wrapper").append(
+                            $("<img>").addClass("imageClass").attr("src", item.image),
+                            $("<div></div>").addClass("info-wrapper").append(
+                                $("<div></div>").addClass("title").text(item.title),
+                                $("<div></div>").addClass("author").text("by " + item.author)
+                            )
+                        )
+                    )
+                )
+                .appendTo(ul);
         };
+
 
 
         var render = $('#findBook').autocomplete('instance')._renderMenu;
@@ -195,6 +199,14 @@
 
         });
 
+        $.extend($.ui.autocomplete.prototype.options, {
+            open: function(event, ui) {
+                $(this).autocomplete("widget").css({
+                    "width": ($(this).width() + "px")
+                });
+            }
+        });
+
     });
 
 </script>
@@ -203,21 +215,18 @@
 <body>
 
 
-<div class="searchBook">
-
-    <h1>
-        File Zombie
-    </h1>
-
-    <h2>1st iteration</h2>
-    <h3>search for books</h3>
-
-    <input type="text" placeholder="Title/ Author/ ISBN" id="findBook" />
-    <button type="button" id="searchBtn">Search</button>
-
-
-
+<div class="nav-right">
+    <div class="logo">
+        <h1>FileZombie</h1>
+        <h3>search for books</h3>
+    </div>
+    <div class="search-container">
+        <input type="text" placeholder="Title/ Author/ ISBN" id="findBook" />
+        <button type="button" id="searchBtn">Search</button>
+    </div>
 </div>
+
+
 
 </body>
 

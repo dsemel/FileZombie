@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +18,8 @@
 
     <script type="text/javascript" src="/javascripts/footer.js"></script>
 
+
+
     <!--<script src="/public/javascripts/shorten.js"></script> -->
     <title>FileZombie</title>
 
@@ -34,66 +34,47 @@
 </head>
 <body>
 
+<form method="POST" action="/logout">
+    <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
+</form>
+<br>
+<a href="/home">Home</a>
+<div id="nav"></div>
 
-<div class="header">
-
-    <!--
-    <div class="logo">
-
-
-    </div> -->
-
-    <div id="nav"></div>
+<h1>Welcome <%= name %></h1>
 
 
 
 
+<form method="post" action="/display_list/"
+      onsubmit="displayMessage()">
 
-</div>
+    <label for="addLists">Select a List:</label>
+    <select id="bookLists" name="list" required>
+        <option selected="selected">Please select ...</option>
+        <option value="read" >read</option>
+        <option value="currently reading">currently reading</option>
+        <option value="want to read">want to read</option>
 
+    </select>
 
-<div class = "front-page">
+    <input type="submit" name="submit">
 
-
-
-    <div class="fiction">
-
-        <h1>New York Times Best Sellers: Fiction</h1>
-
-        <%books.forEach(function(b) { %> <form id="fiction-image" method="post" action="book_profile/<%=b.title%>&<%=b.author%>">
-
-
-
-            <input id="book-image" type="image" src ="<%=b.book_image %>">
-
-        </form>
-
-
-        <%}); %>
-
-
-    </div>
-
-    <div id="nonfiction">
-
-        <h1>New York Times Best Sellers: Non-Fiction</h1>
-
-        <%nf_books.forEach(function(a) { %> <form method="post" action="book_profile/<%=a.title%>&<%=a.author%>">
-            <input id="book-image" type="image" src ="<%=a.book_image %>" ></form>
-
-        <%}); %>
+</form>
+<form method="post" action="/display_list/" target="hiddenFrame">
+    <label for="addLists">Additional Lists:</label>
+    <select id="addLists" name="moreList" required>
+        <option selected disabled>More...</option>
+        <% addList.slice(3, addList.length).forEach(function(b) { %>
+            <option value="<%= b.list_name %>"><%= b.list_name %></option>
+        <% }) %>
+    </select>
+    <input type="submit" name="submit" value="Submit">
+</form>
 
 
-    </div>
-
-
-
-
-</div>
-
-
-
-
+    <br>
+<br>
 <div id = "footer">
 
 </div>

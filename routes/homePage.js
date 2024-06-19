@@ -19,6 +19,25 @@ const fs = require('fs');
 var dotenv = require('dotenv');
 dotenv.config();
 
+var mongoose = require('mongoose');
+
+var mongoLink = process.env.MONGO_DB_ATLAS;
+
+var promise = mongoose.connect(mongoLink, {
+
+    // useMongoClient: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+mongoose.Promise = global.Promise;
+
+var db = mongoose.connection;
+
+var book_list = require('./list.js');
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 var port = process.env.PORT || 3000;
 
 var app = express();
@@ -42,6 +61,8 @@ app.use(express.urlencoded({ extended: false }));
 var apiKey = process.env.api_key;
 
 
+
+
 /* GET home page. */
 
 router.get('/', function(req,resp){
@@ -50,11 +71,13 @@ router.get('/', function(req,resp){
 
 
 
+
 });
 
 router.get('/', function(req,resp){
-    resp.render('home', {books:"", nf_books:""});
+    //resp.render('home', {books:"", nf_books:""});
 
+    resp.render('home', {books:"", nf_books:"" });
 
 });
 
@@ -63,6 +86,7 @@ router.get('/', function(req,resp){
 
 
 router.get('/home', function(req,resp) {
+
 
     async.parallel([
             function (next) {
@@ -74,12 +98,17 @@ router.get('/home', function(req,resp) {
                             next(error);
                         }
 
-                        else {
+                        try {
                             var info = JSON.parse(body);
-                            const books = info.results.books;
-                            return next(null, books);
-
-
+                            if (info && info.results && info.results.books) {
+                                const books = info.results.books;
+                                next(null, books);
+                            } else {
+                                next(new Error('Invalid response structure for fiction books'));
+                            }
+                        } catch (parseError) {
+                            console.error(parseError);
+                            next(parseError);
                         }
                     });
             },
@@ -95,14 +124,17 @@ router.get('/home', function(req,resp) {
                             next(error);
                         }
 
-                        else {
+                        try {
                             var nf_info = JSON.parse(body);
-
-                            const nf_books = nf_info.results.books;
-
-                            return next(null, nf_books);
-
-
+                            if (nf_info && nf_info.results && nf_info.results.books) {
+                                const nf_books = nf_info.results.books;
+                                next(null, nf_books);
+                            } else {
+                                next(new Error('Invalid response structure for nonfiction books'));
+                            }
+                        } catch (parseError) {
+                            console.error(parseError);
+                            next(parseError);
                         }
 
 
@@ -112,13 +144,57 @@ router.get('/home', function(req,resp) {
             }],
 
         function (err, results) {
+            if (err) {
+                return resp.status(500).send('Error fetching book data.');
+            }
+            const {userContext}  = req;
 
-            resp.render('home', {books: results[0], nf_books: results[1]});
+
+            resp.render('home', {userContext, books: results[0], nf_books: results[1]});
+
+            if(userContext) {
+                book_list.findOne({"userId": req.userContext.userinfo.sub}, function (err, doc) {
+
+                    if (doc) {
+
+
+                    } else {
+
+
+                        var userBookList = new book_list({
+                            userId: req.userContext.userinfo.sub,
+                            first_name: req.userContext.userinfo.given_name,
+                            last_name: req.userContext.userinfo.family_name,
+                            newList:[{"list_name":"read"}, {"list_name":"currently reading"}, {"list_name":"want to read"}]
+
+
+
+                        });
+
+
+                        userBookList.save(function (err) {
+
+
+                            if (err) {
+                                console.log(err);
+                            }
+
+
+
+
+                        });
+
+
+                    }
+                })
+            }
 
 
 
         });
 });
+
+
 module.exports = router;
 
 
