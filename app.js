@@ -55,7 +55,11 @@ app.use(
         saveUninitialized: false,
         store: new MemoryStore({
             checkPeriod: 86400000
-        })
+        }),
+        cookie: {
+            secure: true, // ✅ Forces HTTPS
+            sameSite: 'none' // ✅ Required when using cookies across domains
+        }
     })
 );
 
