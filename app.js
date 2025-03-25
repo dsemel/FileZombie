@@ -12,6 +12,7 @@ var alert = require('alert');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set('trust proxy', 1); // ✅ trust Heroku proxy for secure cookies
 
 var bodyParser = require('body-parser');
 
@@ -58,7 +59,7 @@ app.use(
         }),
         cookie: {
             secure: true, // ✅ Forces HTTPS
-            sameSite: 'none' // ✅ Required when using cookies across domains
+            sameSite: 'lax' // ✅ Required when using cookies across domains
         }
     })
 );
