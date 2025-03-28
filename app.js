@@ -64,6 +64,12 @@ app.use(
     })
 );
 
+app.use((req, res, next) => {
+    console.log("Session at this point:", req.session);
+    next();
+});
+
+
 const { ExpressOIDC } = require('@okta/oidc-middleware');
 const oidc = new ExpressOIDC({
     appBaseUrl: process.env.HOST_URL,
