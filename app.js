@@ -59,15 +59,16 @@ app.use(
         }),
         cookie: {
             secure: true, // ✅ Forces HTTPS
-            sameSite: 'lax' // ✅ Required when using cookies across domains
+            sameSite: 'none' // ✅ Required when using cookies across domains
         }
     })
 );
 
 app.use((req, res, next) => {
-    console.log("Session at this point:", req.session);
+    console.log('Session at beginning of request:', req.session);
     next();
 });
+
 
 
 const { ExpressOIDC } = require('@okta/oidc-middleware');
