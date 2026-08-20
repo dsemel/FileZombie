@@ -14,6 +14,8 @@ var async = require('async');
 const fs = require('fs');
 
 var mongoose = require('mongoose');
+mongoose.set("strictQuery", false);
+
 
 var mongoLink = process.env.MONGO_DB_ATLAS;
 

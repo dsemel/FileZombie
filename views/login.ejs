@@ -1,0 +1,17 @@
+<h1>Log in</h1>
+
+<% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+<% } %>
+
+<form method="POST" action="/login">
+    <label>Email</label><br/>
+    <input name="email" type="email" placeholder="Email" required><br/><br/>
+
+    <label>Password</label><br/>
+    <input name="password" type="password" placeholder="Password" required><br/><br/>
+
+    <button type="submit">Log in</button>
+</form>
+
+<p><a href="/register">Create an account</a></p>

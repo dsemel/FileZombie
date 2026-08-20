@@ -4,14 +4,15 @@
 <head>
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script src="/javascripts/searchBarScript.js"></script>
+
     <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
 
-    <script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
 
-    <script type="text/javascript" src="/javascripts/postNewPage.js"></script>
 
     <script type="text/javascript" src="/javascripts/footer.js"></script>
 
@@ -36,7 +37,7 @@
 
         $(function () {
             $("#bookLists").change(function () {
-                if($(this).val()==5){
+                if ($(this).val() === "5") {
                     $('#New').show().focus();
                 }else{
                     $('#New').val('').hide();
@@ -70,7 +71,7 @@
 <div class="header">
     <div class="nav-left">
         <a href="/home">Home</a>
-        <% if (userContext) { %>
+        <% if (isAuthenticated) { %>
             <a class="nav-item nav-link" href="/profile">Profile</a>
             <form method="POST" action="/logout">
                 <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
@@ -100,11 +101,21 @@
     <div class="book-details">
         <h2><%=book_title%></h2>
         <p>by <%=book_author%></p>
+        <% if (book_isbnTen) {%>
         <p>ISBN-10: <%=book_isbnTen%></p>
+        <% }%>
+        <% if(book_isbnThirteen) {%>
         <p>ISBN-13: <%=book_isbnThirteen%></p>
-        <p>Page Count: <%=book_pageCount%></p>
+        <%}%>
+        <% if (book_pageCount) { %>
+            <p>Page Count: <%= book_pageCount %></p>
+        <% } %>
+        <% if(book_printType) { %>
         <p>Book Type: <%=book_printType%></p>
+        <% } %>
+        <% if(book_description) { %>
         <p><%=book_description%></p>
+        <% } %>
     </div>
 </div>
 
@@ -113,13 +124,13 @@
             </style>
     <iframe name="hiddenFrame" class="hide"></iframe>
 
-<% if (userContext)  { %>
-<form method="post" action="/fileExpress/<%=book_title%>&<%=book_author%>" target="hiddenFrame"
+    <% if (isAuthenticated) { %>
+<form method="post" action="/fileExpress/<%= encodeURIComponent(book_title) %>&<%= encodeURIComponent(book_author) %>" target="hiddenFrame"
            onsubmit="displayMessage()">
 
 
     <select id="bookLists" name="list" required>
-        <option selected="selected">Please select ...</option>
+        <option selected disabled>Please select ...</option>
         <option value="read" >read</option>
         <option value="currently reading">currently reading</option>
         <option value="want to read">want to read</option>
@@ -128,18 +139,21 @@
     <input type='text' id='New' name='New' style="display:none">
     <input type="submit" name="submit">
 
-    <input type="hidden" id="image" name="image" value="<%=book_image%>">
+    <input type="hidden" name="image" value="<%=book_image%>">
 
 </form>
 
-    <form method="post" action="/fileExpress/<%=book_title%>&<%=book_author%>" target="hiddenFrame"
+    <form method="post" action="/fileExpress/<%= encodeURIComponent(book_title) %>&<%= encodeURIComponent(book_author) %>" target="hiddenFrame"
           onsubmit="displayMessage()">
-    <select id="addLists" name="moreList" required>
-        <option selected="selected">More ...</option>
-        <% addList.slice(3,addList.length).forEach(function(b) { %>
-            <option value="<%= b.list_name %>">  <%= b.list_name %></option>
-        <% }) %>
-    </select>
+        <select id="addLists" name="moreList" required>
+            <option selected disabled>More ...</option>
+
+            <% if (Array.isArray(addList) && addList.length > 3) { %>
+                <% addList.slice(3).forEach(function(b) { %>
+                    <option value="<%= b.list_name %>"><%= b.list_name %></option>
+                <% }) %>
+            <% } %>
+        </select>
         <input type="submit" name="submit">
 
         <style> #messageSave{
@@ -147,41 +161,34 @@
                 color: orangered;
             }</style>
 
-        <input type="hidden" id="image" name="image" value="<%=book_image%>">
+        <input type="hidden" name="image" value="<%=book_image%>">
         <p id="messageSave"></p>
 
 
 
-    <!--
-    <div class = "submit-button">
-
-        <input type="hidden" id="list" name="list" value="<%=read%>">
-        <button type="submit"  class="btn-shorten" id="button_ID" >I've read it</button>
 
 
 
-    </div>
-
-   -->
 </form>
 
     <% } else { %>
 
+        <form onsubmit="FbotonOn(); return false;">
+            <select id="bookLists" name="list" required>
+                <option selected disabled>Please select ...</option>
+                <option value="read">read</option>
+                <option value="currently reading">currently reading</option>
+                <option value="want to read">want to read</option>
+                <option value="5">new</option>
+            </select>
 
-        <select id="bookLists" name="list" required>
-            <option selected="selected">Please select ...</option>
-            <option value="read" >read</option>
-            <option value="currentlyReading">currently reading</option>
-            <option value="wantToRead">want to read</option>
-            <option value="5">new</option>
-        </select>
-        <input type='text' id='New' name='New' style="display:none">
-        <input type="submit" name="submit" onclick="FbotonOn()">
+            <input type="text" id="New" name="New" style="display:none">
+            <button type="submit">Save</button>
 
+            <p id="messageRed" style="color: orangered;"></p>
+        </form>
 
-        <p id="messageRed"></p>
-
-<% }%>
+    <% } %>
 
 
 
@@ -191,11 +198,7 @@
 </div>
 
 <!-- Your web-app is https, so your scripts need to be too -->
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"
-        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-        crossorigin="anonymous"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 
 

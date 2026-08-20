@@ -1,0 +1,23 @@
+<h1>Create account</h1>
+
+<% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+<% } %>
+
+<form method="POST" action="/register">
+    <label>First name</label><br/>
+    <input name="first_name" placeholder="First name" required><br/><br/>
+
+    <label>Last name</label><br/>
+    <input name="last_name" placeholder="Last name" required><br/><br/>
+
+    <label>Email</label><br/>
+    <input name="email" type="email" placeholder="Email" required><br/><br/>
+
+    <label>Password (10+ characters)</label><br/>
+    <input name="password" type="password" placeholder="Password" minlength="10" required><br/><br/>
+
+    <button type="submit">Register</button>
+</form>
+
+<p><a href="/login">Already have an account? Log in</a></p>

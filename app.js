@@ -3,6 +3,9 @@ const express = require('express');
 
 const app = express();
 
+var dotenv = require('dotenv');
+dotenv.config();
+
 
 var path = require('path');
 
@@ -20,7 +23,7 @@ var createError = require('http-errors');
 
 
 var logger = require('morgan');
-var session = require("express-session");
+
 
 var request = require('request');
 
@@ -28,13 +31,12 @@ var async = require('async');
 
 const fs = require('fs');
 
-var okta = require("@okta/okta-sdk-nodejs");
 
 
-const MemoryStore = require('memorystore')(session);
 
-var dotenv = require('dotenv');
-dotenv.config();
+
+
+
 
 
 
@@ -57,44 +59,53 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+
+const session = require("express-session");
+const MongoStore = require("connect-mongo").default;
+
+
 app.use(
-    require('express-session')({
-        secret: process.env.APP_SECRET,
-        resave: true,
+    session({
+        name: "fz.sid",
+        secret: process.env.SESSION_SECRET, // keep compatibility
+        resave: false,
         saveUninitialized: false,
-        store: new MemoryStore({
-            checkPeriod: 86400000
+        rolling: true,
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_DB_ATLAS,
+            ttl: 60 * 60 * 24 * 14, // 14 days
         }),
         cookie: {
-            secure: true, // ✅ Forces HTTPS
-            sameSite: 'none' // ✅ Required when using cookies across domains
-        }
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // only true in prod
+            sameSite: "lax", // ✅ now login is on same site
+            maxAge: 1000 * 60 * 60 * 24 * 14,
+        },
     })
 );
 
+const passport = require("./auth/passport"); // adjust path if your file is elsewhere
+app.use(passport.initialize());
+app.use(passport.session());
+
+const authRoutes = require("./routes/auth");
+app.use("/", authRoutes);
+
 app.use((req, res, next) => {
-    console.log('Session at beginning of request:', req.session);
+    res.locals.user = req.user || null;
+    res.locals.isAuthenticated = req.isAuthenticated ? req.isAuthenticated() : false;
     next();
 });
 
 
 
-const { ExpressOIDC } = require('@okta/oidc-middleware');
-const oidc = new ExpressOIDC({
-    appBaseUrl: process.env.HOST_URL,
-    issuer: `${process.env.OKTA_ORG_URL}/oauth2/default`,
-    client_id: process.env.OKTA_CLIENT_ID,
-    client_secret: process.env.OKTA_CLIENT_SECRET,
-    redirect_uri: `${process.env.HOST_URL}/callback`,
-    scope: 'openid profile',
-    routes: {
-        loginCallback: {
-            path: '/callback'
-        },
-    }
-});
 
-app.use(oidc.router);
+
+
+
+
 
 
 app.set('views', path.join(__dirname, '/views'));
@@ -112,14 +123,9 @@ app.use(express.urlencoded({ extended: false }));
 
 
 
-var apiKey = process.env.api_key;
 
-var tempArray = [];
 
-// catch 404 and forward to error handler
-//app.use(function(req, res, next) {
-//  next(createError(404));
-//});
+
 
 
 
@@ -132,8 +138,8 @@ var tempArray = [];
 
 
 const homePage = require('./routes/homePage.js');
-
 app.use('/', homePage);
+
 
 
 app.get('/authors', function(req,resp){
@@ -171,37 +177,28 @@ app.get('/terms', function(req,resp){
 
 });
 
-//app.get('/profile', oidc.ensureAuthenticated(), function(req,resp){
-
-  //  const {userContext}  = req;
-
-    //console.log(userContext.userinfo.sub);
-
-
-    //resp.render('profile.ejs', {userContext, name: userContext.userinfo.given_name});
-
-
-//});
-
-
-const bookProfile = require('./routes/bookProfile.js');
-
-app.all('/book_profile/:encoded_id', bookProfile);
-
-var fileExpress = require('./routes/fileExpress.js');
-
-app.all('/fileExpress/:encoded_id', fileExpress);
-
-
-var bookResults = require('./routes/bookResults.js');
-
-app.all('/book_results/:encoded_id', bookResults);
 
 
 
-var redirectDisplayList = require('./routes/redirectDisplayList.js');
 
-app.post('/redirectDisplayList/:encoded_id', redirectDisplayList);
+const bookProfile = require("./routes/bookProfile.js");
+app.use("/book_profile", bookProfile);
+
+const fileExpress = require("./routes/fileExpress.js");
+app.use("/fileExpress", fileExpress);
+
+
+
+
+const bookResults = require("./routes/bookResults.js");
+app.use("/book_results", bookResults);
+
+
+const apiBooks = require("./routes/apiBooks");
+app.use("/api/books", apiBooks);
+
+
+
 
 var displayList = require('./routes/displayList.js');
 
@@ -215,17 +212,14 @@ var change_date_finished = require('./routes/changeDate.js');
 
 app.post('/changeDate/:encoded_id', change_date_finished);
 
-var view_User_Profile = require('./routes/profile.js');
-
-app.get('/profile', view_User_Profile);
-
+const view_User_Profile = require("./routes/profile.js");
+app.use("/", view_User_Profile);
 
 
-//var register = require('./routes/register');
 
-//app.all('/register', register);
 
-//app.use('/register', require('./routes/register'));
+
+
 
 
 
@@ -264,26 +258,15 @@ app.use(function (err, req, res, next) {
 
 
 
-//});
-
-// error handler
-//app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-//  res.locals.message = err.message;
- // res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
- // res.status(err.status || 500);
- // res.render('error');
-// });
 
 module.exports = app;
 
 
 
-// listen for requests :)
+
+
 var server = app.listen(port, function () {
-    //var port = server.address().port;
+
 
     console.log('Your app is listening on port ' + port);
 });

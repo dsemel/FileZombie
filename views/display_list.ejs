@@ -11,12 +11,11 @@
 
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="/javascripts/postNewPage.js"></script>
+<script src="/javascripts/searchBarScript.js"></script>
 
 <script type="text/javascript" src="/javascripts/footer.js"></script>
 
@@ -61,7 +60,7 @@
 <div class="header">
 
     <a href="/home">Home</a>
-    <% if (userContext)  { %>
+    <% if (isAuthenticated) { %>
         <a class="nav-item nav-link" href="/profile">Profile</a>
         <br>
         <br>
@@ -107,6 +106,8 @@
                 <th>Book Image</th>
                 <th>Date Finished</th>
                 <th>Date Added</th>
+                <th>Current List</th>
+                <th>Move to</th>
                 <th>Remove</th>
 
             </tr>
@@ -143,6 +144,22 @@
                         </form>
                     </td>
                     <td><%= b.date_added.toLocaleDateString() %></td>
+                    <td><%= b.list_name %></td>
+                    <td>
+                        <form method="post" action="/moveBook/<%= b.list_name %>&<%= b.book_name %>&<%= b.book_author%>">
+                            <select name="targetList">
+                                <% userContext.lists.forEach(function(list) { %>
+                                    <% if (list !== b.list_name) { %>
+                                        <option value="<%= list %>"><%= list %></option>
+                                    <% } %>
+                                <% }); %>
+                                <option value="__new__">New list...</option>
+                            </select>
+                            <input type="text" name="newListName" placeholder="New list name (if selected)">
+                            <button type="submit">Move</button>
+                        </form>
+                    </td>
+
                     <td>
                         <form method="post" action="/deleteBook/<%=listName%>&<%=b.book_name%>"
                               onsubmit="return confirm('Do you really want to remove the book?');">
@@ -215,14 +232,5 @@
 
 
 </body>
-<!-- Your web-app is https, so your scripts need to be too -->
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"
-        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-        crossorigin="anonymous"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js'></script>
 
-<link rel="stylesheet" href=
-"https://cdnjs.cloudflare.com/ajax/libs/Primer/0.0.0-20220329110403/primer.css">
-<!--<script src="/public/javascripts/shorten.js"></script> -->
 </html>

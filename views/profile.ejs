@@ -8,13 +8,14 @@
 
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script src="/javascripts/searchBarScript.js"></script>
     <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
 
-    <script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
 
-    <script type="text/javascript" src="/javascripts/postNewPage.js"></script>
 
     <script type="text/javascript" src="/javascripts/footer.js"></script>
 
@@ -46,33 +47,30 @@
 
 
 
-<form method="post" action="/display_list/"
-      onsubmit="displayMessage()">
+<form method="post" action="/display_list/">
+    <label for="listSelect">Select a List:</label>
 
-    <label for="addLists">Select a List:</label>
-    <select id="bookLists" name="list" required>
-        <option selected="selected">Please select ...</option>
-        <option value="read" >read</option>
+    <select id="listSelect" name="list" required>
+        <option value="" selected disabled>Please select ...</option>
+        <option value="read">read</option>
         <option value="currently reading">currently reading</option>
         <option value="want to read">want to read</option>
 
+        <% if (addList && addList.length > 3) { %>
+            <optgroup label="Your Lists">
+                <% addList.slice(3).forEach(function(b) { %>
+                    <option value="<%= b.list_name %>"><%= b.list_name %></option>
+                <% }) %>
+            </optgroup>
+        <% } %>
     </select>
 
-    <input type="submit" name="submit">
-
-</form>
-<form method="post" action="/display_list/" target="hiddenFrame">
-    <label for="addLists">Additional Lists:</label>
-    <select id="addLists" name="moreList" required>
-        <option selected disabled>More...</option>
-        <% addList.slice(3, addList.length).forEach(function(b) { %>
-            <option value="<%= b.list_name %>"><%= b.list_name %></option>
-        <% }) %>
-    </select>
-    <input type="submit" name="submit" value="Submit">
+    <button type="submit">Open</button>
 </form>
 
-
+<% if (emptyMessage) { %>
+    <p><%= emptyMessage %></p>
+<% } %>
     <br>
 <br>
 <div id = "footer">
@@ -81,15 +79,6 @@
 
 
 
-<!-- Your web-app is https, so your scripts need to be too -->
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"
-        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-        crossorigin="anonymous"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-
-
-<!--<script src="/public/javascripts/shorten.js"></script> -->
 </body>
 </html>

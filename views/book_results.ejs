@@ -11,12 +11,11 @@
 
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="/javascripts/postNewPage.js"></script>
+<script src="/javascripts/searchBarScript.js"></script>
 
 <script type="text/javascript" src="/javascripts/footer.js"></script>
 
@@ -38,7 +37,7 @@
 <div class="header">
     <div class="nav-left">
         <a href="/home">Home</a>
-        <% if (userContext) { %>
+        <% if (isAuthenticated) { %>
             <a class="nav-item nav-link" href="/profile">Profile</a>
             <form method="POST" action="/logout">
                 <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
@@ -72,7 +71,7 @@
 
             <div class="result-item">
                 <div class="result-image">
-        <form id="fiction" method="get" action= "/book_profile/<%=b.volumeInfo.title%>&<%=b.volumeInfo.authors%>">
+                    <form id="fiction" method="get" action="/book_profile/<%= encodeURIComponent(b.volumeInfo.title) %>&<%= encodeURIComponent(b.volumeInfo.authors.join(', ')) %>">
 
 
 
@@ -103,11 +102,8 @@
 
 
     <div class="pagination">
-
-
-        <a href="?page=<%= currentPage-1%>">Previous</a>
-        <a href="?page=<%=currentPage+1%>">Next</a>
-
+        <a href="?page=<%= Math.max(1, currentPage - 1) %>">Previous</a>
+        <a href="?page=<%= Math.min(pageCount || 1, currentPage + 1) %>">Next</a>
     </div>
 
 
@@ -119,11 +115,6 @@
 </div>
 
 
-<!-- Your web-app is https, so your scripts need to be too -->
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"
-        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-        crossorigin="anonymous"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-<!--<script src="/public/javascripts/shorten.js"></script> -->
+
 </body>
 </html>

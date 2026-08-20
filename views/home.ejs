@@ -1,126 +1,102 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
-
-    <!-- Your web-app is https, so your scripts need to be too -->
-
-
-
-
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
-
-    <script type="text/javascript" src="/javascripts/searchBarScript.js"></script>
-
-    <script type="text/javascript" src="/javascripts/postNewPage.js"></script>
-
-    <script type="text/javascript" src="/javascripts/footer.js"></script>
-
-
-
-    <!--<script src="/public/javascripts/shorten.js"></script> -->
     <title>FileZombie</title>
-
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
     <link rel="stylesheet" href="/style.css" type="text/css">
     <link rel="stylesheet" href="/home.css" type="text/css">
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/javascripts/searchBarScript.js"></script>
+
+
+
+    <script src="/javascripts/footer.js"></script>
+
     <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|EB+Garamond|Encode+Sans+Expanded|Inconsolata|Karla|Manuale|Nunito+Sans|Pontano+Sans|Roboto+Slab:300|Rokkitt|Sanchez" rel="stylesheet">
 </head>
-<body>
 
+<body>
 
 <div class="header">
 
-    <!--
-    <div class="logo">
-
-
-    </div> -->
-
-    <% if (userContext)  { %>
-        <a class="nav-item nav-link" href="/profile">Profile</a>
-        <br>
-        <br>
-        <form method="POST" action="/logout">
-            <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
-        </form>
-
-    <% } else { %>
-        <div class="login-container">
-            <a class="nav-item nav-link" href="/login">Log in/Register</a>
-            <div class="terms-text">
-                By logging in, or creating an account, you agree to FileZombie
-                <a href="/terms">Terms</a> /
-                <a href="/privacy">Privacy Policy</a>
-            </div>
-        </div>
-
-
-    <% }%>
-
-    <br>
-
     <div id="nav"></div>
+    <div class="nav-left">
+        <a href="/home">Home</a>
 
+        <% if (isAuthenticated) { %>
+            <a href="/profile">Profile</a>
 
-
-
+            <form method="POST" action="/logout" style="display:inline;">
+                <button type="submit">Logout</button>
+            </form>
+        <% } else { %>
+            <a href="/login">Log in / Register</a>
+        <% } %>
+    </div>
 
 </div>
-
-
-
 
 <div class="front-page">
+
+    <!-- Fiction Section -->
     <div class="book-section">
         <h1>New York Times Best Sellers: Fiction</h1>
+
         <div class="book-grid">
-            <% books.forEach(function(b) { %>
-                <form method="post" action="book_profile/<%= b.title %>&<%= b.author %>">
-                    <input type="image" class="book-image" src="<%= b.book_image %>" alt="<%= b.title %>">
-                </form>
-            <% }) %>
+            <% if (books && books.length) { %>
+                <% books.forEach(function(b) { %>
+
+                    <a href="/book_profile/<%= encodeURIComponent(b.title) %>&<%= encodeURIComponent(b.author) %>">
+                        <img class="book-image"
+                             src="<%= b.book_image %>"
+                             alt="<%= b.title %>">
+                    </a>
+
+                <% }) %>
+            <% } else { %>
+                <p>No fiction books available.</p>
+            <% } %>
         </div>
     </div>
 
+
+    <!-- Non-Fiction Section -->
     <div class="book-section">
         <h1>New York Times Best Sellers: Non-Fiction</h1>
+
         <div class="book-grid">
-            <% nf_books.forEach(function(a) { %>
-                <form method="post" action="book_profile/<%= a.title %>&<%= a.author %>">
-                    <input type="image" class="book-image" src="<%= a.book_image %>" alt="<%= a.title %>">
-                </form>
-            <% }) %>
+            <% if (nf_books && nf_books.length) { %>
+                <% nf_books.forEach(function(a) { %>
+
+                    <a href="/book_profile/<%= encodeURIComponent(a.title) %>&<%= encodeURIComponent(a.author) %>">
+                        <img class="book-image"
+                             src="<%= a.book_image %>"
+                             alt="<%= a.title %>">
+                    </a>
+
+                <% }) %>
+            <% } else { %>
+                <p>No nonfiction books available.</p>
+            <% } %>
         </div>
     </div>
-</div>
-
-
-
-
-<div id = "footer">
 
 </div>
 
-
-
-<!-- Your web-app is https, so your scripts need to be too -->
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"
-        integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-        crossorigin="anonymous"></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div id="footer"></div>
 
 
 
-<!--<script src="/public/javascripts/shorten.js"></script> -->
 </body>
 </html>

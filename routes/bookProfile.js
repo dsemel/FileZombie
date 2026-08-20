@@ -1,184 +1,137 @@
-var express = require('express');
-var router = express.Router();
+// routes/bookProfile.js
+const express = require("express");
+const router = express.Router();
 
+const request = require("request");
+const book_list = require("./list.js");
 
-var path = require('path');
+const googleBooksKey = process.env.GOOGLE_BOOKS_API_KEY;
 
-var bodyParser = require('body-parser');
+function requireAuthOptional(req, res, next) {
+    // We allow viewing book profile without login,
+    // but logged-in users will see their lists.
+    next();
+}
 
-
-var request = require('request');
-
-var async = require('async');
-
-const fs = require('fs');
-
-var alert = require('alert');
-
-var mongoose = require('mongoose');
-
-var mongoLink = process.env.MONGO_DB_ATLAS;
-
-var promise = mongoose.connect(mongoLink, {
-
-    // useMongoClient: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+router.get("/", (req, res) => {
+    res.render("book_profile", {
+        book_description: "",
+        book_image: "",
+        smallBook_image: "",
+        book_title: "",
+        book_author: "",
+        book_isbnTen: "",
+        book_isbnThirteen: "",
+        book_pageCount: "",
+        book_printType: "",
+        read: "read",
+        currentlyReading: "currently reading",
+        wantToRead: "want to read",
+        addList: [], // ✅ always array
+    });
 });
 
-mongoose.Promise = global.Promise;
+// GET /book_profile/:title&:author?
+router.get("/:title&:author?", requireAuthOptional, async (req, res) => {
+    try {
+        const title = req.params.title || "";
+        const author = req.params.author || "";
 
-var db = mongoose.connection;
+        // If logged in, fetch lists (so your dropdown can populate)
+        let addList = [];
+        const isAuthed = req.isAuthenticated && req.isAuthenticated();
+        if (isAuthed) {
+            const userId = String(req.user._id);
+            const doc = await book_list.findOne({ userId }).lean();
+            addList = doc?.newList && Array.isArray(doc.newList) ? doc.newList : [];
+        }
 
-var book_list = require('./list.js');
-const {list} = require("pm2");
+        // Build a correct Google Books query
+        // Example: q=intitle:"Dune"+inauthor:"Frank Herbert"
+        const qParts = [];
+        if (title.trim()) qParts.push(`intitle:"${title}"`);
+        if (author.trim()) qParts.push(`inauthor:"${author}"`);
+        const q = qParts.length ? qParts.join("+") : title || author || "";
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+        const url =
+            "https://www.googleapis.com/books/v1/volumes?q=" +
+            encodeURIComponent(q) +
+            "&printType=books&maxResults=1" +
+            "&key=" + googleBooksKey;
 
-
-
-var dotenv = require('dotenv');
-dotenv.config();
-
-var port = process.env.PORT || 3000;
-
-var app = express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-
-app.set('views', path.join(__dirname, '/views'));
-
-
-app.set('view engine', 'ejs');
-
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-
-router.get('/book_profile', function(req,resp){
-
-    resp.render('book_profile', {book_description:"", book_image:"",smallBook_image:"", book_title: "", book_author: "",
-        book_isbnTen:"", book_isbnThirteen:"", book_pageCount:"", book_printType:"", read:" ", currentlyReading:" ", wantToRead:"", addList:"", i: 3});
-
-
-});
-
-var counter = 0;
-
-router.all('/book_profile/:title&:author?', function(req, response,err){
-
-
-
-    counter = counter + 1;
-    var title = req.params.title;
-    var author = req.params.author;
-
-    var a = [];
-    const {userContext}  = req;
-    if(userContext) {
-
-        book_list.findOne({"userId": req.userContext.userinfo.sub}, function (err, doc) {
-            if (err) {
-                console.log(err)
-            }
-
-            if(doc.newList.length>3) {
-
-                a = doc.newList;
-
-            }
-
-        });
-
-    }
-
-
-    if(author === undefined){
-
-        author = " ";
-        console.log('no author');
-
-    }
-
-
-        var url = "https://www.googleapis.com/books/v1/volumes?q=intitle:" + title + "?=inauthor:" + author + "&?printType=books"
-
-        console.log(author);
-
-
-
-
-
-
-
-
-    if(err){
-
-
-
-        console.log(err);
-    }
-
-
-    request(url,
-        function (error, resp, data) {
+        request(url, (error, apiResp, data) => {
             if (error) {
-
-                console.log(error);
-
+                console.error("Google Books request error:", error);
+                return res.status(500).send("Error fetching book data.");
             }
 
-
-            else {
-                var gb_data = JSON.parse(data);
-
-
-                const gb_description = gb_data.items[0].volumeInfo.description === undefined ? " " : gb_data.items[0].volumeInfo.description;
-                const gb_image = gb_data.items[0].volumeInfo.imageLinks ? gb_data.items[0].volumeInfo.imageLinks.thumbnail : " ";
-                const gb_smallImage = gb_data.items[0].volumeInfo.imageLinks ? gb_data.items[0].volumeInfo.imageLinks.smallThumbnail : " ";
-                const gb_title = gb_data.items[0].volumeInfo.title=== undefined ? " " : gb_data.items[0].volumeInfo.title;
-                const gb_author = gb_data.items[0].volumeInfo.authors=== undefined ? " " : gb_data.items[0].volumeInfo.authors;
-                const gb_isbn13 = gb_data.items[0].volumeInfo.industryIdentifiers ? gb_data.items[0].volumeInfo.industryIdentifiers[0].identifier : " ";
-                const gb_isbn10 = gb_data.items[0].volumeInfo.industryIdentifiers ? gb_data.items[0].volumeInfo.industryIdentifiers[1].identifier : " ";
-                const gb_pageCount = gb_data.items[0].volumeInfo.pageCount=== undefined ? " " : gb_data.items[0].volumeInfo.pageCount;
-                const gb_printType = gb_data.items[0].volumeInfo.printType=== undefined ? " " : gb_data.items[0].volumeInfo.printType;
-
-
-
-                const {userContext}  = req;
-
-                console.log('counter:' + counter);
-
-                response.render('book_profile',{userContext, book_description: gb_description, book_image: gb_image, smallBook_image:gb_smallImage,
-                    book_title: gb_title, book_author: gb_author, book_isbnTen: gb_isbn10, book_isbnThirteen: gb_isbn13,
-                    book_pageCount: gb_pageCount, book_printType: gb_printType, read: "read", currentlyReading:"currentlyReading", wantToRead:"wantToRead", addList:a });
-
-
-
-
-
-
-
-
-
+            let gb_data;
+            try {
+                gb_data = JSON.parse(data);
+            } catch (e) {
+                console.error("Google Books JSON parse error:", e);
+                return res.status(500).send("Error parsing book data.");
             }
 
+            const items = gb_data?.items || [];
 
+            const bestMatch =
+                items.find(b =>
+                    b.volumeInfo &&
+                    b.volumeInfo.description &&
+                    b.volumeInfo.imageLinks &&
+                    b.volumeInfo.imageLinks.thumbnail
+                ) || items[0];
 
+            const item = bestMatch?.volumeInfo;
 
+            if (!item) {
+                return res.render("book_profile", {
+                    book_description: "",
+                    book_image: "",
+                    smallBook_image: "",
+                    book_title: title,
+                    book_author: author,
+                    book_isbnTen: "",
+                    book_isbnThirteen: "",
+                    book_pageCount: "",
+                    book_printType: "",
+                    read: "read",
+                    currentlyReading: "currently reading",
+                    wantToRead: "want to read",
+                    addList,
+                });
+            }
+
+            const identifiers = item.industryIdentifiers || [];
+            const isbn13 = identifiers.find((x) => x.type === "ISBN_13")?.identifier || "";
+            const isbn10 = identifiers.find((x) => x.type === "ISBN_10")?.identifier || "";
+
+            let cleanTitle = item.title || title;
+
+            if (author && cleanTitle.includes(author)) {
+                cleanTitle = cleanTitle.replace(author, "").replace(/:\s*$/, "").trim();
+            }
+            return res.render("book_profile", {
+                book_description: item.description || "",
+                book_image: item.imageLinks?.thumbnail || "/images/no-cover.png",
+                smallBook_image: item.imageLinks?.smallThumbnail || "",
+                book_title: cleanTitle,
+                book_author: Array.isArray(item.authors) ? item.authors.join(", ") : (item.authors || author || ""),
+                book_isbnTen: isbn10,
+                book_isbnThirteen: isbn13,
+                book_pageCount: item.pageCount || "",
+                book_printType: item.printType || "",
+                read: "read",
+                currentlyReading: "currently reading",
+                wantToRead: "want to read",
+                addList,
+            });
         });
+    } catch (err) {
+        console.error("bookProfile error:", err);
+        return res.status(500).send("Error loading book profile.");
+    }
 });
-
-
-
-
-
-
-
 
 module.exports = router;

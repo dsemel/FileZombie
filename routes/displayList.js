@@ -13,26 +13,17 @@ var async = require('async');
 
 const fs = require('fs');
 
-var mongoose = require('mongoose');
 
-var mongoLink = process.env.MONGO_DB_ATLAS;
 
-var promise = mongoose.connect(mongoLink, {
 
-    // useMongoClient: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-mongoose.Promise = global.Promise;
-
-var db = mongoose.connection;
 
 var book_list = require('./list.js');
 const {list} = require("pm2");
 const {get} = require("mongoose");
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+
+
 
 var port = process.env.PORT || 3000;
 
@@ -62,22 +53,20 @@ app.use(express.urlencoded({ extended: false }));
 
 
 
-var counter = 0;
 
 
-//why is the code below being executed multiple times?
-router.post('/display_list/', function(req, response,next){
+function requireAuth(req, res, next) {
+    if (req.isAuthenticated && req.isAuthenticated()) return next();
+    return res.redirect("/login");
+}
 
+router.post("/display_list/", requireAuth, function (req, response, next) {
+    const listName = req.body.list;
 
-    if(req.body.list && !req.body.moreList) {
-
-        var listName = req.body.list;
+    if (!listName || listName === "Please select ..." || listName === "More ...") {
+        return response.redirect("/profile");
     }
-    if(!req.body.list && req.body.moreList) {
 
-
-        var listName = req.body.moreList;
-    }
 
 
 
@@ -114,7 +103,7 @@ router.post('/display_list/', function(req, response,next){
     console.log("skip is" + skip + "" + "current page is" + currentPage + "limit is" + limit);
     console.log("listName is" + listName);
 
-    const {userContext}  = req;
+
 
 
     // Assuming you have already connected to the MongoDB database and imported the User model
@@ -122,7 +111,8 @@ router.post('/display_list/', function(req, response,next){
 // Function to paginate books in a specific list
     async function paginateBooks() {
         try {
-            const user = await book_list.findOne({"userId": req.userContext.userinfo.sub});
+            const userId = String(req.user._id);
+            const user = await book_list.findOne({ userId });
             if (!user) {
                 throw new Error('User not found');
             }
@@ -143,9 +133,7 @@ router.post('/display_list/', function(req, response,next){
             }
 
 
-            const sortedBookList = bookList.sort((a, b) => {    //sorts the books by date finished
-                return b.date_finished - a.date_finished;
-            } );
+            const sortedBookList = [...bookList].sort((a,b) => b.date_finished - a.date_finished);
 
             const startIndex = (currentPage - 1) * perPage;
             const endIndex = startIndex + perPage;
@@ -171,7 +159,7 @@ router.post('/display_list/', function(req, response,next){
 
             if (paginatedBooks.length === 0) {
                 response.render('display_list', {
-                    userContext,
+
                     list_books: paginatedBooks,
                     listName: listName,
                     currentPage: currentPage,
@@ -180,7 +168,7 @@ router.post('/display_list/', function(req, response,next){
                 });
             } else {
                 response.render('display_list', {
-                    userContext,
+
                     list_books: paginatedBooks,
                     listName: listName,
                     currentPage: currentPage,

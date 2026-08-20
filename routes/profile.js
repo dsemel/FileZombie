@@ -1,77 +1,31 @@
-var express = require('express');
-var router = express.Router();
+// routes/profile.js
+const express = require("express");
+const router = express.Router();
 
+const book_list = require("./list.js");
 
-var path = require('path');
+function requireAuth(req, res, next) {
+    if (req.isAuthenticated && req.isAuthenticated()) return next();
+    return res.redirect("/login");
+}
 
-var bodyParser = require('body-parser');
-
-
-var request = require('request');
-
-var async = require('async');
-
-const fs = require('fs');
-
-var mongoose = require('mongoose');
-
-var mongoLink = process.env.MONGO_DB_ATLAS;
-
-var promise = mongoose.connect(mongoLink, {
-
-    // useMongoClient: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-mongoose.Promise = global.Promise;
-
-var db = mongoose.connection;
-
-var book_list = require('./list.js');
-const {list} = require("pm2");
-const {get} = require("mongoose");
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-var port = process.env.PORT || 3000;
-
-var app = express();
-
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-
-app.set('views', path.join(__dirname, '/views'));
-
-app.set('routes', path.join(__dirname, '/routes'));
-
-app.set('view engine', 'ejs');
-
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-
-
-
-router.get('/profile', async function(req, res) {
-    const {userContext}  = req;
-
+router.get("/profile", requireAuth, async (req, res) => {
     try {
-        const doc = await book_list.findOne({"userId": req.userContext.userinfo.sub});
+        const userId = String(req.user._id);
+        const doc = await book_list.findOne({ userId });
 
-        if (doc && doc.newList && doc.newList.length > 3) {
-            res.render('profile', { addList: doc.newList, userContext, name: userContext.userinfo.given_name });
-        } else {
-            res.render('profile', { addList: 'No books added yet!', userContext, name: userContext.userinfo.given_name });
-        }
+        // ✅ Always an array (so EJS can slice/forEach safely)
+        const addList = (doc && Array.isArray(doc.newList)) ? doc.newList : [];
+
+        res.render("profile", {
+            addList,
+            emptyMessage: addList.length === 0 ? "No books added yet!" : null,
+            user: req.user,
+            name: req.user.email,
+        });
     } catch (error) {
-        console.error('Error retrieving profile data:', error);
-        res.status(500).send('Error retrieving profile data.');
+        console.error("Error retrieving profile data:", error);
+        res.status(500).send("Error retrieving profile data.");
     }
 });
 

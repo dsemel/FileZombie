@@ -1,186 +1,93 @@
-var express = require('express');
-var router = express.Router();
+// routes/fileExpress.js
+const express = require("express");
+const router = express.Router();
 
+const book_list = require("./list.js");
 
-var path = require('path');
+function requireAuth(req, res, next) {
+    if (req.isAuthenticated && req.isAuthenticated()) return next();
+    return res.redirect("/login");
+}
 
-var bodyParser = require('body-parser');
+router.post("/:title&:author?", requireAuth, async (req, res) => {
+    try {
+        // Robust list name selection
+        let list_name = String(req.body.New || "").trim();
+        if (!list_name) list_name = String(req.body.moreList || "").trim();
+        if (!list_name) list_name = String(req.body.list || "").trim();
 
+        // If they selected "new" but didn't enter a name
+        if (String(req.body.list || "") === "5" && !String(req.body.New || "").trim()) {
+            return res.status(400).send("New list name required.");
+        }
 
-var request = require('request');
+        if (!list_name) return res.status(400).send("List is required.");
 
-var async = require('async');
+        const title = decodeURIComponent(req.params.title || "");
+        const author = decodeURIComponent(req.params.author || "");
+        const image = String(req.body.image || "");
 
-const fs = require('fs');
+        const userId = String(req.user._id);
 
-var alert = require('alert');
+        // 1) prevent duplicates (same list + same title + same author)
+        const already = await book_list.findOne({
+            userId,
+            newList: {
+                $elemMatch: {
+                    list_name,
+                    books: { $elemMatch: { book_name: title, book_author: author } },
+                },
+            },
+        });
 
+        if (already) return res.sendStatus(204);
 
-
-
-var dotenv = require('dotenv');
-dotenv.config();
-
-var mongoose = require('mongoose');
-
-var mongoLink = process.env.MONGO_DB_ATLAS;
-
-var promise = mongoose.connect(mongoLink, {
-
-    // useMongoClient: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-mongoose.Promise = global.Promise;
-
-var db = mongoose.connection;
-
-var book_list = require('./list.js');
-const {list} = require("pm2");
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-var port = process.env.PORT || 3000;
-
-var app = express();
-
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-
-app.set('views', path.join(__dirname, '/views'));
-
-app.set('routes', path.join(__dirname, '/routes'));
-
-app.set('view engine', 'ejs');
-
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-/*
-router.get('/fileExpress/:title&author?', function(req, resp){
-
-    resp.render('/home');
-    //resp.status(204).send();
-});
-*/
-
-router.post('/fileExpress/:title&:author?', function(req, resp){
-
-     console.log(req.body.New);
-
-    if(!req.body.New && !req.body.moreList){
-
-        var list_name = req.body.list;
-
-
-    }
-
-    else if(!req.body.New && !req.body.list){
-        var list_name = req.body.moreList;
-   }
-
-    else{
-        var list_name = req.body.New;
-    }
-
-    var title = req.params.title;
-    var author = req.params.author;
-
-    var image = req.body.image;
-
-
-    const addToList = {};
-
-
-
-    addToList[list_name] = [{book_name: title, book_author:author, date_added: new Date()}];
-
-    var bookShelf = JSON.stringify(req.body.list);
-
-
-
-      book_list.findOne({"userId": req.userContext.userinfo.sub, newList:{ $elemMatch: {"list_name": list_name, "books.book_name":title, "books.book_author": author}}}, function (err, doc) {
-
-            if(doc){
-
-
-                        console.log("book already added to list")
-                        console.log(doc);
-
-
-
-            }
-
-            else{
-
-
-                book_list.findOneAndUpdate({
-                        userId: req.userContext.userinfo.sub,
-                        newList: {
-                            $elemMatch: {
-                                list_name: list_name
-                            }
-                        }
+        // 2) try to push into an existing list
+        const updated = await book_list.findOneAndUpdate(
+            { userId, "newList.list_name": list_name },
+            {
+                $push: {
+                    "newList.$.books": {
+                        list_name,
+                        book_name: title,
+                        book_author: author,
+                        date_added: new Date(),
+                        book_image: image,
                     },
-                    {
-                        $push: {
-                            "newList.$.books": {
-                                list_name: list_name,
+                },
+            },
+            { new: true }
+        );
+
+        if (updated) return res.sendStatus(204);
+
+        // 3) list doesn't exist yet → create it
+        await book_list.findOneAndUpdate(
+            { userId },
+            {
+                $push: {
+                    newList: {
+                        list_name,
+                        books: [
+                            {
+                                list_name,
                                 book_name: title,
                                 book_author: author,
                                 date_added: new Date(),
-                                book_image: image
-                            }
-                        }
-                    }, function(err, doc){
+                                book_image: image,
+                            },
+                        ],
+                    },
+                },
+            },
+            { new: true }
+        );
 
-                    if(doc){
-
-
-
-                        console.log("book added to existing list");
-
-                    }
-
-                    else{
-                        book_list.findOneAndUpdate({"userId": req.userContext.userinfo.sub},{ $push:{newList:{"list_name": list_name, books:{list_name: list_name,book_name: title, book_author:author, date_added: new Date(),book_image: image}}}},
-
-
-                            function (error, success) {
-                                if (error) {
-                                   // console.log(error);
-                                } else {
-                                   // console.log(success);
-                                }
-                            });
-
-                    }
-
-                })
-
-
-
-                //console.log("book saved to list")
-
-
-
-
-                  }
-        })
-
-
-
-
-
-
+        return res.sendStatus(204);
+    } catch (err) {
+        console.error("fileExpress error:", err);
+        return res.status(500).send("Error saving book.");
+    }
 });
-
-
 
 module.exports = router;

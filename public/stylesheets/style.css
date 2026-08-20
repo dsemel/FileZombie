@@ -452,3 +452,14 @@ a {
     text-decoration: none;
     margin-bottom: 5px;
 }
+
+.book-details {
+    max-width: 700px;
+    line-height: 1.7;
+}
+
+.profile-book-image {
+    width: 180px;
+    height: auto;
+    border-radius: 4px;
+}
