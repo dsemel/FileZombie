@@ -30,7 +30,7 @@ var book_listSchema = new mongoose.Schema({
             book_author: {type: String, required: true},
             date_added: {type: Date, default: Date.now},
             date_finished: {type: Date, default: Date.now},
-            book_image:{type: String, required: true}
+            book_image:{type: String, default: "/images/no-cover.png"}
 
 
         }]}],

@@ -89,6 +89,9 @@
 <div class="content">
 
     <h1><%= message%> </h1>
+    <% if (movedBook && destination) { %>
+        <p><strong><%= movedBook %></strong> was moved to <strong><%= destination %></strong>.</p>
+    <% } %>
     <div id="seeResults">
 
 
@@ -124,8 +127,14 @@
 
 
 
-                            <input id="book-image_search" type="image"
-                                   src =  <%=b.book_image === undefined ? " " : b.book_image   %> >
+                            <input
+                                    id="book-image_search"
+                                    type="image"
+                                    src="<%= b.book_image || '/images/no-cover.png' %>"
+                                    alt="<%= b.book_name %>"
+                                    onerror="this.onerror=null; this.src='/images/no-cover.png';"
+                                    style="width: 130px; height: auto; max-height: 200px; object-fit: contain;"
+                            >
 
 
 

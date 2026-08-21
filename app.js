@@ -202,11 +202,14 @@ app.use("/api/books", apiBooks);
 
 var displayList = require('./routes/displayList.js');
 
-app.post('/display_list/', displayList);
+app.use('/', displayList);
 
 var remove_book_from_list = require('./routes/deleteBook.js');
 
 app.post('/deleteBook/:encoded_id', remove_book_from_list);
+
+const moveBook = require("./routes/moveBook.js");
+app.use("/", moveBook);
 
 var change_date_finished = require('./routes/changeDate.js');
 

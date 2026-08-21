@@ -60,18 +60,17 @@ function requireAuth(req, res, next) {
     return res.redirect("/login");
 }
 
-router.post("/display_list/", requireAuth, function (req, response, next) {
-    const listName = req.body.list;
+async function renderList(req, response, next, listName) {
 
-    if (!listName || listName === "Please select ..." || listName === "More ...") {
-        return response.redirect("/profile");
-    }
 
 
 
 
     console.log('listName is ' + listName);
    // var listName = req.params.encoded_id;
+
+    const movedBook = String(req.query.moved || "");
+    const destination = String(req.query.destination || "");
 
     var tempArray = [];
 
@@ -117,6 +116,10 @@ router.post("/display_list/", requireAuth, function (req, response, next) {
                 throw new Error('User not found');
             }
 
+            const lists = user.newList.map(list => list.list_name);
+
+            console.log("User's lists:", lists);
+
             // Use find to get the sublist that matches the listName
 
             // Use find to get the sublist that matches the list_name
@@ -145,7 +148,8 @@ router.post("/display_list/", requireAuth, function (req, response, next) {
 
             return {
                 paginatedBooks,
-                totalPages
+                totalPages,
+                lists
             };
         } catch (error) {
             throw new Error(`Error paginating books: ${error.message}`);
@@ -155,33 +159,44 @@ router.post("/display_list/", requireAuth, function (req, response, next) {
 
 
     paginateBooks()
-        .then(({ paginatedBooks, totalPages }) => { // Destructure the resolved object
+        .then(({ paginatedBooks, totalPages, lists }) => {
 
-            if (paginatedBooks.length === 0) {
-                response.render('display_list', {
+            response.render('display_list', {
+                list_books: paginatedBooks,
+                listName: listName,
+                currentPage: currentPage,
+                totalPages: totalPages,
+                message: paginatedBooks.length === 0
+                    ? "No books saved to " + listName + " yet!"
+                    : "Books saved to " + listName,
+                userContext: {
+                    lists: lists
+                },
+                movedBook: movedBook,
+                destination: destination
+            });
 
-                    list_books: paginatedBooks,
-                    listName: listName,
-                    currentPage: currentPage,
-                    totalPages: 0, // Correctly display totalPages even if it's 0
-                    message: "No books saved to " + listName + " yet!"
-                });
-            } else {
-                response.render('display_list', {
-
-                    list_books: paginatedBooks,
-                    listName: listName,
-                    currentPage: currentPage,
-                    totalPages: totalPages, // Ensure totalPages is used from the resolved object
-                    message: "Books saved to " + listName
-                });
-            }
         })
         .catch(error => {
             console.error('Error:', error.message);
-            // Consider rendering an error page or message here as well
+            next(error);
         });
 
 
+}
+
+router.post("/display_list/", requireAuth, function (req, res, next) {
+    const listName = req.body.list;
+
+    if (!listName || listName === "Please select ..." || listName === "More ...") {
+        return res.redirect("/profile");
+    }
+
+    return renderList(req, res, next, listName);
+});
+
+router.get("/display_list/:listName", requireAuth, function (req, res, next) {
+    const listName = decodeURIComponent(req.params.listName);
+    return renderList(req, res, next, listName);
 });
 module.exports = router;

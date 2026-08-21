@@ -39,7 +39,20 @@ router.post("/register", async (req, res) => {
             userId: String(user._id),
             first_name,
             last_name,
-            newList: [],
+            newList: [
+                {
+                    list_name: "want to read",
+                    books: []
+                },
+                {
+                    list_name: "currently reading",
+                    books: []
+                },
+                {
+                    list_name: "read",
+                    books: []
+                }
+            ],
         });
 
         req.login(user, (err) => {

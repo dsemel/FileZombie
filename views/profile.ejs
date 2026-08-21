@@ -52,15 +52,23 @@
 
     <select id="listSelect" name="list" required>
         <option value="" selected disabled>Please select ...</option>
+
         <option value="read">read</option>
         <option value="currently reading">currently reading</option>
         <option value="want to read">want to read</option>
 
-        <% if (addList && addList.length > 3) { %>
+        <%
+        const defaultLists = ["read", "currently reading", "want to read"];
+        const customLists = addList.filter(function(b) {
+            return !defaultLists.includes(b.list_name);
+        });
+        %>
+
+        <% if (customLists.length > 0) { %>
             <optgroup label="Your Lists">
-                <% addList.slice(3).forEach(function(b) { %>
+                <% customLists.forEach(function(b) { %>
                     <option value="<%= b.list_name %>"><%= b.list_name %></option>
-                <% }) %>
+                <% }); %>
             </optgroup>
         <% } %>
     </select>
