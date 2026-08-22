@@ -5,8 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<link rel="stylesheet" href="/style.css" type="text/css">
-<link rel="stylesheet" href="/home.css" type="text/css">
+<link rel="stylesheet" href="/stylesheets/style.css" type="text/css">
+<link rel="stylesheet" href="/stylesheets/home.css" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|EB+Garamond|Encode+Sans+Expanded|Inconsolata|Karla|Manuale|Nunito+Sans|Pontano+Sans|Roboto+Slab:300|Rokkitt|Sanchez" rel="stylesheet">
 
 
@@ -19,9 +19,7 @@
 
 <script type="text/javascript" src="/javascripts/footer.js"></script>
 
-<link rel="stylesheet" href="table-sortable.css" />
-<script src="jquery.slim.min.js"></script>
-<script src="table-sortable.js"></script>
+
 
 
 
@@ -86,13 +84,42 @@
 </div>
 
 
-<div class="content">
+<div class="display-list-layout">
 
-    <h1><%= message%> </h1>
-    <% if (movedBook && destination) { %>
-        <p><strong><%= movedBook %></strong> was moved to <strong><%= destination %></strong>.</p>
-    <% } %>
-    <div id="seeResults">
+    <aside class="list-sidebar">
+        <h3>My Lists</h3>
+
+        <% userContext.lists.forEach(function(list) { %>
+
+            <% if (list === listName) { %>
+                <div class="list-link current-list">
+                    <%= list %>
+                </div>
+            <% } else { %>
+                <a
+                        class="list-link"
+                        href="/display_list/<%= encodeURIComponent(list) %>"
+                >
+                    <%= list %>
+                </a>
+            <% } %>
+
+        <% }); %>
+    </aside>
+
+    <main class="content">
+
+        <h1><%= message %></h1>
+
+        <% if (movedBook && destination) { %>
+            <p>
+                <strong><%= movedBook %></strong>
+                was moved to
+                <strong><%= destination %></strong>.
+            </p>
+        <% } %>
+
+        <div id="seeResults">
 
 
 
@@ -133,7 +160,7 @@
                                     src="<%= b.book_image || '/images/no-cover.png' %>"
                                     alt="<%= b.book_name %>"
                                     onerror="this.onerror=null; this.src='/images/no-cover.png';"
-                                    style="width: 130px; height: auto; max-height: 200px; object-fit: contain;"
+                                    style="width: 100%; max-width: 110px; height: auto; max-height: 180px; object-fit: contain; display: block; margin: 0 auto;"
                             >
 
 
@@ -187,22 +214,25 @@
 
 
 
-        <div class="pagination">
-            <% if (currentPage > 1) { %>
-                <a href="?page=1">First</a>
-                <a href="?page=<%= currentPage - 1 %>">Previous</a>
-            <% } %>
-            <% if (currentPage < totalPages) { %>
-                <a href="?page=<%= currentPage + 1 %>">Next</a>
-                <a href="?page=<%= totalPages %>">Last</a>
-            <% } %>
-        </div>
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="?page=1">First</a>
+                    <a href="?page=<%= currentPage - 1 %>">Previous</a>
+                <% } %>
 
-    </div>
-</div>
-<div id = "footer">
+                <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>">Next</a>
+                    <a href="?page=<%= totalPages %>">Last</a>
+                <% } %>
+            </div>
 
-</div>
+        </div> <!-- closes #seeResults -->
+
+    </main> <!-- closes .content -->
+
+</div> <!-- closes .display-list-layout -->
+
+<div id="footer"></div>
 
 <script>
     function changeDate(listName, bookName) {

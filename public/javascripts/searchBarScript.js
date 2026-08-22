@@ -1,3 +1,5 @@
+console.log("searchBarScript.js loaded");
+
 $(document).ready(function () {
     $("#nav").load("/javascripts/searchBr.html", function () {
         // Prevent double-init if nav is loaded multiple times
@@ -11,6 +13,9 @@ $(document).ready(function () {
         $input.autocomplete({
             minLength: 2,
             delay: 200,
+            classes: {
+                "ui-autocomplete": "fz-search-autocomplete"
+            },
             source: function (request, response) {
                 const term = (request.term || "").trim();
                 if (!term) return response([]);
@@ -86,3 +91,4 @@ $(document).ready(function () {
         });
     });
 });
+

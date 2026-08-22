@@ -463,3 +463,195 @@ a {
     height: auto;
     border-radius: 4px;
 }
+
+/* Book search autocomplete */
+.fz-search-autocomplete {
+    width: 340px !important;
+    max-width: 90vw;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.fz-search-autocomplete .item-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px;
+}
+
+.fz-search-autocomplete .imageClass {
+    width: 60px;
+    height: 90px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.fz-search-autocomplete .info-wrapper {
+    min-width: 0;
+}
+
+.fz-search-autocomplete .title {
+    font-weight: bold;
+}
+
+.fz-search-autocomplete .author {
+    margin-top: 4px;
+}
+
+/* Display List sidebar */
+
+.display-list-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    width: 100%;
+}
+
+.list-sidebar {
+    width: 190px;
+    flex-shrink: 0;
+    padding: 20px 10px;
+}
+
+.list-sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.list-link {
+    display: block;
+    padding: 8px 10px;
+    margin-bottom: 4px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+a.list-link:hover {
+    background: #f2f2f2;
+}
+
+.current-list {
+    background: #eeeeee;
+    font-weight: bold;
+}
+
+.display-list-layout .content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ========================================
+   DISPLAY LIST TABLE
+   ======================================== */
+
+.display-list-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.list-sidebar {
+    width: 210px;
+    flex-shrink: 0;
+}
+
+.display-list-layout .content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Keep the book table inside the available space */
+#bookTable {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* Allow wrapping, but don't break individual words */
+#bookTable th,
+#bookTable td {
+    overflow-wrap: normal;
+    word-wrap: normal;
+    word-break: normal;
+    vertical-align: middle;
+}
+
+/* Title */
+#bookTable th:nth-child(1),
+#bookTable td:nth-child(1) {
+    width: 18%;
+}
+
+/* Author */
+#bookTable th:nth-child(2),
+#bookTable td:nth-child(2) {
+    width: 11%;
+}
+
+/* Book Image */
+#bookTable th:nth-child(3),
+#bookTable td:nth-child(3) {
+    width: 13%;
+}
+
+/* Date Finished */
+#bookTable th:nth-child(4),
+#bookTable td:nth-child(4) {
+    width: 14%;
+}
+
+/* Date Added */
+#bookTable th:nth-child(5),
+#bookTable td:nth-child(5) {
+    width: 11%;
+}
+
+/* Current List */
+#bookTable th:nth-child(6),
+#bookTable td:nth-child(6) {
+    width: 12%;
+}
+
+/* Move to */
+#bookTable th:nth-child(7),
+#bookTable td:nth-child(7) {
+    width: 16%;
+}
+
+/* Remove */
+#bookTable th:nth-child(8),
+#bookTable td:nth-child(8) {
+    width: 10%;
+}
+
+/* Keep controls from forcing their cells wider */
+#bookTable select,
+#bookTable input[type="text"],
+#bookTable input[type="date"] {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Make the move controls fit neatly */
+#bookTable td:nth-child(7) select,
+#bookTable td:nth-child(7) input[type="text"] {
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+/* Keep book covers contained inside the Book Image column */
+#bookTable td:nth-child(3) {
+    overflow: hidden;
+}
+
+#bookTable td:nth-child(3) input[type="image"] {
+    width: 100% !important;
+    max-width: 110px;
+    height: auto !important;
+    max-height: 180px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
