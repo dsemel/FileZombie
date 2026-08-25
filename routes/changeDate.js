@@ -62,7 +62,7 @@ router.post('/changeDate/:list&:title?', async (req, res) => {
     var title = req.params.title;
     var newDate = req.body.newDate;
 
-    const {userContext}  = req;
+
     // Convert the date string to a UTC date object
     const utcDate = new Date(newDate);
     // Convert the UTC date to a string in ISO format to ensure consistency
@@ -87,7 +87,7 @@ router.post('/changeDate/:list&:title?', async (req, res) => {
 
         try {
             const result = await book_list.updateOne(
-                { "userId": req.userContext.userinfo.sub, "newList.list_name": list, "newList.books.book_name": title },
+                { "userId": req.user._id, "newList.list_name": list, "newList.books.book_name": title },
                 { $set: { "newList.$[list].books.$[book].date_finished": date} },
                 {
                     arrayFilters: [
