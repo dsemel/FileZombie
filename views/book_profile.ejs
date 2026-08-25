@@ -59,8 +59,7 @@
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" href="/style.css" type="text/css">
-    <link rel="stylesheet" href="/home.css" type="text/css">
+
     <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|EB+Garamond|Encode+Sans+Expanded|Inconsolata|Karla|Manuale|Nunito+Sans|Pontano+Sans|Roboto+Slab:300|Rokkitt|Sanchez" rel="stylesheet">
 
 
@@ -93,109 +92,209 @@
 
 
 
-<h1>Book Profile Page</h1>
+    <main class="book-profile-page">
 
-<div class="book-profile">
+        <h1>Book Profile</h1>
 
-<img src ="<%=book_image %>" alt="Book Image" class="profile-book-image ">
-    <div class="book-details">
-        <h2><%=book_title%></h2>
-        <p>by <%=book_author%></p>
-        <% if (book_isbnTen) {%>
-        <p>ISBN-10: <%=book_isbnTen%></p>
-        <% }%>
-        <% if(book_isbnThirteen) {%>
-        <p>ISBN-13: <%=book_isbnThirteen%></p>
-        <%}%>
-        <% if (book_pageCount) { %>
-            <p>Page Count: <%= book_pageCount %></p>
-        <% } %>
-        <% if(book_printType) { %>
-        <p>Book Type: <%=book_printType%></p>
-        <% } %>
-        <% if(book_description) { %>
-        <p><%=book_description%></p>
-        <% } %>
-    </div>
-</div>
+        <div class="book-profile">
 
-        <style>
-                 .hide { position:absolute; top:-1px; left:-1px; width:1px; height:1px; }
-            </style>
-    <iframe name="hiddenFrame" class="hide"></iframe>
+            <div class="book-profile-cover">
+                <img
+                        src="<%= book_image %>"
+                        alt="<%= book_title %>"
+                        class="profile-book-image"
+                        onerror="this.onerror=null; this.src='/images/no-cover.png';"
+                >
+            </div>
 
-    <% if (isAuthenticated) { %>
-<form method="post" action="/fileExpress/<%= encodeURIComponent(book_title) %>&<%= encodeURIComponent(book_author) %>" target="hiddenFrame"
-           onsubmit="displayMessage()">
+            <div class="book-details">
 
+                <h2><%= book_title %></h2>
 
-    <select id="bookLists" name="list" required>
-        <option selected disabled>Please select ...</option>
-        <option value="read" >read</option>
-        <option value="currently reading">currently reading</option>
-        <option value="want to read">want to read</option>
-        <option value="5">new</option>
-    </select>
-    <input type='text' id='New' name='New' style="display:none">
-    <input type="submit" name="submit">
+                <p class="book-author">by <%= book_author %></p>
 
-    <input type="hidden" name="image" value="<%=book_image%>">
+                <div class="book-metadata">
+                    <% if (book_isbnTen) { %>
+                        <p><strong>ISBN-10:</strong> <%= book_isbnTen %></p>
+                    <% } %>
 
-</form>
+                    <% if (book_isbnThirteen) { %>
+                        <p><strong>ISBN-13:</strong> <%= book_isbnThirteen %></p>
+                    <% } %>
 
-    <form method="post" action="/fileExpress/<%= encodeURIComponent(book_title) %>&<%= encodeURIComponent(book_author) %>" target="hiddenFrame"
-          onsubmit="displayMessage()">
-        <select id="addLists" name="moreList" required>
-            <option selected disabled>More ...</option>
+                    <% if (book_pageCount) { %>
+                        <p><strong>Page Count:</strong> <%= book_pageCount %></p>
+                    <% } %>
 
-            <% if (Array.isArray(addList) && addList.length > 3) { %>
-                <% addList.slice(3).forEach(function(b) { %>
-                    <option value="<%= b.list_name %>"><%= b.list_name %></option>
-                <% }) %>
-            <% } %>
-        </select>
-        <input type="submit" name="submit">
+                    <% if (book_printType) { %>
+                        <p><strong>Book Type:</strong> <%= book_printType %></p>
+                    <% } %>
+                </div>
 
-        <style> #messageSave{
+                <% if (book_description) { %>
+                    <div class="book-description-section">
+                        <h3>Description</h3>
 
-                color: orangered;
-            }</style>
+                        <div id="bookDescription" class="book-description collapsed">
+                            <%= book_description %>
+                        </div>
 
-        <input type="hidden" name="image" value="<%=book_image%>">
-        <p id="messageSave"></p>
+                        <button
+                                type="button"
+                                id="descriptionToggle"
+                                class="description-toggle"
+                                onclick="toggleDescription()"
+                        >
+                            Show more
+                        </button>
+                    </div>
+                <% } %>
 
+            </div>
 
+            <div class="book-profile-actions">
 
+                <% if (isAuthenticated) { %>
 
+                    <form
+                            method="post"
+                            action="/fileExpress/<%= encodeURIComponent(book_title) %>&<%= encodeURIComponent(book_author) %>"
+                            target="hiddenFrame"
+                            onsubmit="displayMessage()"
+                            class="book-list-form"
+                    >
 
+                        <select id="bookLists" name="list" required>
+                            <option selected disabled>Please select a list...</option>
+                            <option value="read">read</option>
+                            <option value="currently reading">currently reading</option>
+                            <option value="want to read">want to read</option>
+                            <option value="5">new</option>
+                        </select>
 
-</form>
+                        <input
+                                type="text"
+                                id="New"
+                                name="New"
+                                placeholder="New list name"
+                                style="display:none"
+                        >
 
-    <% } else { %>
+                        <button type="submit">Save to list</button>
 
-        <form onsubmit="FbotonOn(); return false;">
-            <select id="bookLists" name="list" required>
-                <option selected disabled>Please select ...</option>
-                <option value="read">read</option>
-                <option value="currently reading">currently reading</option>
-                <option value="want to read">want to read</option>
-                <option value="5">new</option>
-            </select>
+                        <input type="hidden" name="image" value="<%= book_image %>">
 
-            <input type="text" id="New" name="New" style="display:none">
-            <button type="submit">Save</button>
-
-            <p id="messageRed" style="color: orangered;"></p>
-        </form>
-
-    <% } %>
+                    </form>
 
 
+                    <%
+                        const standardLists = [
+                            "read",
+                            "currently reading",
+                            "want to read"
+                        ];
+
+                        const customLists = Array.isArray(addList)
+                                ? addList.filter(function(b) {
+                                    return !standardLists.includes(b.list_name);
+                                })
+                                : [];
+                    %>
+
+                    <% if (customLists.length > 0) { %>
+
+                        <form
+                                method="post"
+                                action="/fileExpress/<%= encodeURIComponent(book_title) %>&<%= encodeURIComponent(book_author) %>"
+                                target="hiddenFrame"
+                                onsubmit="displayMessage()"
+                                class="book-list-form"
+                        >
+
+                            <select id="addLists" name="moreList" required>
+                                <option selected disabled>More lists...</option>
+
+                                <% customLists.forEach(function(b) { %>
+                                    <option value="<%= b.list_name %>">
+                                        <%= b.list_name %>
+                                    </option>
+                                <% }) %>
+                            </select>
+
+                            <button type="submit">Save to list</button>
+
+                            <input type="hidden" name="image" value="<%= book_image %>">
+
+                        </form>
+
+                    <% } %>
+
+                    <p id="messageSave"></p>
+
+
+                <% } else { %>
+
+                    <form
+                            onsubmit="FbotonOn(); return false;"
+                            class="book-list-form"
+                    >
+
+                        <select id="bookLists" name="list" required>
+                            <option selected disabled>Please select a list...</option>
+                            <option value="read">read</option>
+                            <option value="currently reading">currently reading</option>
+                            <option value="want to read">want to read</option>
+                            <option value="5">new</option>
+                        </select>
+
+                        <input
+                                type="text"
+                                id="New"
+                                name="New"
+                                placeholder="New list name"
+                                style="display:none"
+                        >
+
+                        <button type="submit">Save to list</button>
+
+                        <p id="messageRed"></p>
+
+                    </form>
+
+                <% } %>
+
+            </div>
+
+
+
+        </div>
+
+
+        <iframe name="hiddenFrame" class="hide"></iframe>
+
+
+
+    </main>
 
 
 <div id = "footer">
 
 </div>
+
+    <script>
+        function toggleDescription() {
+            const description = document.getElementById("bookDescription");
+            const button = document.getElementById("descriptionToggle");
+
+            if (description.classList.contains("collapsed")) {
+                description.classList.remove("collapsed");
+                button.textContent = "Show less";
+            } else {
+                description.classList.add("collapsed");
+                button.textContent = "Show more";
+            }
+        }
+    </script>
 
 <!-- Your web-app is https, so your scripts need to be too -->
 

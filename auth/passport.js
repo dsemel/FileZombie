@@ -27,7 +27,7 @@ passport.use(
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
     try {
-        const user = await User.findById(id).select("_id email");
+        const user = await User.findById(id).select("_id email first_name last_name");
         done(null, user || false);
     } catch (e) {
         done(e);

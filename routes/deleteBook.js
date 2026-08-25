@@ -59,44 +59,55 @@ app.use(express.urlencoded({ extended: false }));
 
 
 
-router.post('/deleteBook/:list&:title?', async (req, res) => {
+function requireAuth(req, res, next) {
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return next();
+    }
 
-        const list = req.params.list;
-        const title = req.params.title;
-        const {userContext}  = req;
+    return res.redirect("/login");
+}
 
-        try {
-            const user = await  book_list.findOne({"userId": req.userContext.userinfo.sub}, {newList:{$elemMatch:{listName: list}}});
-            if (!user) {
-                throw new Error('User not found');
-            }
+router.post("/deleteBook/:list&:title?", requireAuth, async (req, res, next) => {
 
-            console.log("user is" + user);
-            const bookList = user.newList[0].books;
+    try {
+        const userId = String(req.user._id);
 
-            console.log("This is bookList" + bookList);
-            if (!bookList) {
-                throw new Error('Book list not found');
-            }
+        const listName = decodeURIComponent(req.params.list);
+        const bookTitle = decodeURIComponent(req.params.title);
 
-            const bookIndex = bookList.findIndex(bookList => bookList.book_name === title);
+        const userBookList = await book_list.findOne({ userId });
 
-            if (bookIndex === -1) {
-                return res.status(404).json({ error: 'Book not found' });
-            }
-
-            bookList.splice(bookIndex, 1);  // remove the book from the list
-
-            // Save the updated user
-            await user.save();
-
-            return res.json({ message: 'Book deleted successfully' });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: 'Internal Server Error' });
+        if (!userBookList) {
+            return res.status(404).send("Book list not found.");
         }
-        res.redirect('/home');
 
+        const currentList = userBookList.newList.find(
+            list => list.list_name === listName
+        );
+
+        if (!currentList) {
+            return res.status(404).send("List not found.");
+        }
+
+        const bookIndex = currentList.books.findIndex(
+            book => book.book_name === bookTitle
+        );
+
+        if (bookIndex === -1) {
+            return res.status(404).send("Book not found.");
+        }
+
+        currentList.books.splice(bookIndex, 1);
+
+        await userBookList.save();
+
+        return res.redirect(
+            "/display_list/" + encodeURIComponent(listName)
+        );
+
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

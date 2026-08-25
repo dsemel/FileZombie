@@ -655,3 +655,232 @@ a.list-link:hover {
     display: block;
     margin: 0 auto;
 }
+
+/* =========================
+   BOOK PROFILE PAGE
+   ========================= */
+
+.book-profile-page {
+    max-width: 1000px;
+    margin: 35px auto 50px;
+    padding: 0 20px;
+}
+
+.book-profile-page > h1 {
+    margin: 0 0 25px;
+    font-size: 36px;
+    font-weight: 500;
+}
+
+.book-profile {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 35px;
+    align-items: start;
+}
+
+.book-profile-cover {
+    width: 200px;
+}
+
+.profile-book-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 310px;
+    object-fit: contain;
+}
+
+.book-details {
+    min-width: 0;
+}
+
+.book-details h2 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.book-author {
+    margin: 0 0 22px;
+    font-size: 18px;
+}
+
+.book-metadata {
+    margin-bottom: 24px;
+}
+
+.book-metadata p {
+    margin: 8px 0;
+}
+
+.book-description {
+    max-width: 720px;
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+.book-profile-actions {
+    margin-left: 235px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.book-list-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.book-list-form select,
+.book-list-form input[type="text"] {
+    min-height: 38px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+}
+
+.book-list-form select {
+    min-width: 200px;
+}
+
+.book-list-form input[type="text"] {
+    width: 180px;
+}
+
+.book-list-form button {
+    min-height: 38px;
+    padding: 6px 14px;
+    cursor: pointer;
+}
+
+#messageSave,
+#messageRed {
+    color: orangered;
+    margin-top: 10px;
+}
+
+.hide {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 1px;
+    height: 1px;
+}
+
+
+/* Smaller screens */
+
+@media (max-width: 750px) {
+
+    .book-profile {
+        grid-template-columns: 1fr;
+    }
+
+    .book-profile-cover {
+        width: 160px;
+    }
+
+    .book-profile-actions {
+        margin-left: 0;
+    }
+
+    .book-list-form {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* =========================
+   UPDATED BOOK PROFILE LAYOUT
+   ========================= */
+
+.book-profile {
+    display: grid;
+    grid-template-columns: 200px minmax(350px, 1fr) 220px;
+    gap: 35px;
+    align-items: start;
+}
+
+.book-profile-actions {
+    margin: 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.book-profile-actions::before {
+    content: "Add to My Lists";
+    display: block;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.book-list-form {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.book-list-form select,
+.book-list-form input[type="text"],
+.book-list-form button {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+}
+
+.book-description {
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+.book-description.collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.book-description-section h3 {
+    margin: 25px 0 8px;
+    font-size: 20px;
+}
+
+.description-toggle {
+    margin-top: 12px;
+    padding: 7px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.description-toggle:hover {
+    background: #f5f5f5;
+}
+
+@media (max-width: 900px) {
+
+    .book-profile {
+        grid-template-columns: 170px 1fr;
+    }
+
+    .book-profile-actions {
+        grid-column: 2;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .book-profile {
+        grid-template-columns: 1fr;
+    }
+
+    .book-profile-actions {
+        grid-column: auto;
+    }
+}

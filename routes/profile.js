@@ -21,7 +21,7 @@ router.get("/profile", requireAuth, async (req, res) => {
             addList,
             emptyMessage: addList.length === 0 ? "No books added yet!" : null,
             user: req.user,
-            name: req.user.email,
+            name: req.user.first_name,
         });
     } catch (error) {
         console.error("Error retrieving profile data:", error);
