@@ -172,9 +172,15 @@
                         <% }%>
 
 
-                        </td>
-                    <td id="dateFinished-<%= b.book_name %>"><%= b.date_finished.toLocaleDateString() %>
-                        <form id="changeDateForm-<%= b.book_name %>" onsubmit="return changeDate('<%= listName %>', '<%= b.book_name %>');">
+
+                    </td>
+                    <td id="dateFinished-<%= b.book_name %>">
+                        <%= b.date_finished.toLocaleDateString() %>
+
+                        <form id="changeDateForm-<%= b.book_name %>"
+                              data-list-name="<%= listName %>"
+                              data-book-name="<%= b.book_name %>"
+                              onsubmit="return changeDate(this.dataset.listName, this.dataset.bookName);">
                             <input type="date" name="newDate" id="newDateInput" required>
                             <button type="submit">Change Date</button>
                         </form>
