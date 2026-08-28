@@ -35,58 +35,161 @@
 </head>
 <body>
 
-<form method="POST" action="/logout">
-    <button type="submit" class="btn btn-link nav-item nav-link">Logout</button>
-</form>
-<br>
-<a href="/home">Home</a>
-<div id="nav"></div>
+<div class="profile-header">
 
-<h1>Welcome <%= name %></h1>
+    <div id="nav"></div>
 
+    <div class="profile-desktop-links">
+        <a href="/home">Home</a>
 
-
-
-<form method="post" action="/display_list/">
-    <label for="listSelect">Select a List:</label>
-
-    <select id="listSelect" name="list" required>
-        <option value="" selected disabled>Please select ...</option>
-
-        <option value="read">read</option>
-        <option value="currently reading">currently reading</option>
-        <option value="want to read">want to read</option>
-
-        <%
-        const defaultLists = ["read", "currently reading", "want to read"];
-        const customLists = addList.filter(function(b) {
-            return !defaultLists.includes(b.list_name);
-        });
-        %>
-
-        <% if (customLists.length > 0) { %>
-            <optgroup label="Your Lists">
-                <% customLists.forEach(function(b) { %>
-                    <option value="<%= b.list_name %>"><%= b.list_name %></option>
-                <% }); %>
-            </optgroup>
-        <% } %>
-    </select>
-
-    <button type="submit">Open</button>
-</form>
-
-<% if (emptyMessage) { %>
-    <p><%= emptyMessage %></p>
-<% } %>
-    <br>
-<br>
-<div id = "footer">
+        <form method="POST" action="/logout">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 
 </div>
 
 
+<main class="profile-page">
 
+    <div class="profile-title">
+        <h1>My Lists</h1>
+        <p>Welcome <%= name %></p>
+    </div>
+
+    <%
+    const defaultLists = [
+        "read",
+        "currently reading",
+        "want to read"
+    ];
+
+    const customLists = addList.filter(function(b) {
+        return !defaultLists.includes(b.list_name);
+    });
+    %>
+
+    <section class="profile-lists">
+
+        <h2>Your Books</h2>
+
+        <form method="post" action="/display_list/" class="list-row">
+            <input type="hidden" name="list" value="currently reading">
+            <button type="submit" class="list-row-button">
+                <span>Currently Reading</span>
+                <span class="list-arrow">›</span>
+            </button>
+        </form>
+
+        <form method="post" action="/display_list/" class="list-row">
+            <input type="hidden" name="list" value="want to read">
+            <button type="submit" class="list-row-button">
+                <span>Want to Read</span>
+                <span class="list-arrow">›</span>
+            </button>
+        </form>
+
+        <form method="post" action="/display_list/" class="list-row">
+            <input type="hidden" name="list" value="read">
+            <button type="submit" class="list-row-button">
+                <span>Read</span>
+                <span class="list-arrow">›</span>
+            </button>
+        </form>
+
+
+        <% if (customLists.length > 0) { %>
+
+            <h3 class="custom-lists-heading">Your Lists</h3>
+
+            <% customLists.forEach(function(b) { %>
+
+                <form method="post" action="/display_list/" class="list-row">
+
+                    <input
+                            type="hidden"
+                            name="list"
+                            value="<%= b.list_name %>"
+                    >
+
+                    <button type="submit" class="list-row-button">
+                        <span><%= b.list_name %></span>
+                        <span class="list-arrow">›</span>
+                    </button>
+
+                </form>
+
+            <% }); %>
+
+        <% } %>
+
+        <% if (emptyMessage) { %>
+            <p class="profile-empty-message">
+                <%= emptyMessage %>
+            </p>
+        <% } %>
+
+    </section>
+
+
+
+
+
+
+        <% if (emptyMessage) { %>
+            <p class="profile-empty-message">
+                <%= emptyMessage %>
+            </p>
+        <% } %>
+
+    </section>
+
+</main>
+
+
+<div id="footer"></div>
+
+
+<div class="mobile-bottom-nav">
+
+    <a href="/home">Home</a>
+
+    <a href="/profile">My Lists</a>
+
+    <a href="#" id="mobileSearchLink">Search</a>
+
+    <a href="/profile">Profile</a>
+
+    <a href="/contact">More</a>
+
+</div>
+
+
+<script>
+    document.addEventListener("click", function (event) {
+
+        if (event.target.id === "mobileSearchLink") {
+
+            event.preventDefault();
+
+            const searchInput =
+                document.getElementById("findBook");
+
+            if (searchInput) {
+
+                searchInput.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+                setTimeout(function () {
+                    searchInput.focus();
+                }, 300);
+
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

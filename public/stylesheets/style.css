@@ -383,18 +383,19 @@ th {
     text-decoration: underline;
 }
 
-.header {
-    background-color: #f8f9fa;
-    padding: 20px;
+.home-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Align items at the top */
-    flex-wrap: wrap; /* Allow items to wrap */
+    align-items: center;
 }
 
-.nav-left {
+.home-header .nav-left {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    gap: 28px;
+
+    /* gives Search and Home some breathing room */
+    margin-left: 80px;
 }
 
 .nav-right {
@@ -883,4 +884,867 @@ a.list-link:hover {
     .book-profile-actions {
         grid-column: auto;
     }
+}
+
+/* ========================================
+   FileZombie Mobile Homepage
+   ======================================== */
+
+@media screen and (max-width: 768px) {
+
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    .front-page {
+        width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .book-section {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .book-section h1 {
+        font-size: 22px;
+        line-height: 1.2;
+        margin: 15px 0;
+    }
+
+    .book-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 10px;
+        width: 100%;
+    }
+
+    .book-grid a {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .book-image {
+        width: 100%;
+        max-width: 105px;
+        height: 155px;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+
+
+@media screen and (max-width: 768px) {
+
+    .home-header .nav-left {
+        display: none;
+    }
+
+
+
+    .front-page {
+        padding-bottom: 80px;
+    }
+}
+
+/* ========================================
+   MOBILE BOOK PROFILE
+   ======================================== */
+
+/* ========================================
+   MOBILE BOOK PROFILE
+   ======================================== */
+
+@media screen and (max-width: 768px) {
+
+    .nav-left {
+        display: none;
+    }
+
+    .book-profile-page {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 20px 16px 100px;
+        box-sizing: border-box;
+    }
+
+    .book-profile-page > h1 {
+        font-size: 24px;
+        text-align: center;
+        margin: 10px 0 20px;
+    }
+
+    /* Change desktop book layout into a mobile vertical layout */
+    .book-profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 0;
+    }
+
+    /* Cover */
+    .book-profile-cover {
+        width: 100%;
+        text-align: center;
+        margin: 0 0 18px;
+    }
+
+    .profile-book-image {
+        width: auto;
+        height: auto;
+        max-width: 150px;
+        max-height: 225px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Title, author, metadata and description */
+    .book-details {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .book-details h2 {
+        font-size: 25px;
+        line-height: 1.2;
+        margin: 0 0 6px;
+        text-align: center;
+    }
+
+    .book-author {
+        text-align: center;
+        margin: 0 0 20px;
+        font-size: 15px;
+    }
+
+    .book-metadata {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .book-metadata p {
+        font-size: 14px;
+        margin: 8px 0;
+    }
+
+    /* Description */
+    .book-description-section {
+        width: 100%;
+        margin-top: 24px;
+    }
+
+    .book-description-section h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .book-description {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    /* Add to My Lists */
+    .book-profile-actions {
+        width: 100%;
+        max-width: none;
+        margin: 25px 0 0;
+        box-sizing: border-box;
+    }
+
+    /* Mobile FileZombie/search header */
+
+    .nav-right {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo {
+        width: 100%;
+        text-align: center;
+    }
+
+    .logo h1 {
+        font-size: 30px;
+        margin: 0;
+    }
+
+    .logo h3 {
+        font-size: 14px;
+        margin: 2px 0 12px;
+    }
+
+    .search-container {
+        width: 100%;
+        margin-left: 0;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .search-container input {
+        flex: 1;
+        min-width: 0;
+        max-width: 300px;
+        box-sizing: border-box;
+    }
+
+    .search-container button {
+        flex-shrink: 0;
+    }
+}
+
+/* =========================================
+   PROFILE / MY LISTS
+   ========================================= */
+
+.profile-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+.profile-title h1 {
+    margin-bottom: 5px;
+}
+
+.profile-title p {
+    margin-top: 0;
+    color: #666;
+}
+
+.profile-lists {
+    margin-top: 35px;
+}
+
+.profile-list-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-list-form select {
+    min-width: 250px;
+    padding: 8px;
+}
+
+.profile-open-button {
+    padding: 8px 18px;
+}
+
+
+/* Hide mobile navigation on desktop */
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+
+/* =========================================
+   MOBILE PROFILE / MY LISTS
+   ========================================= */
+
+@media screen and (max-width: 768px) {
+
+    .profile-header .profile-desktop-links {
+        display: none;
+    }
+
+    .profile-page {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 28px 16px 100px;
+        box-sizing: border-box;
+    }
+
+    .profile-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-title h1 {
+        font-size: 30px;
+        margin: 0 0 6px;
+    }
+
+    .profile-title p {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .profile-lists {
+        margin-top: 25px;
+    }
+
+    .profile-lists h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+
+    .profile-list-form {
+        display: block;
+        width: 100%;
+    }
+
+    .profile-list-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 15px;
+    }
+
+    .profile-list-form select {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        height: 44px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background: white;
+    }
+
+    .profile-open-button {
+        display: block;
+        width: 100%;
+        height: 44px;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+
+    .profile-empty-message {
+        margin-top: 20px;
+    }
+}
+
+.list-row {
+    margin: 0;
+}
+
+.list-row-button {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    background: white;
+    padding: 17px 8px;
+    font-size: 17px;
+    text-align: left;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-row-button:hover {
+    background: #f7f7f7;
+}
+
+.list-arrow {
+    font-size: 25px;
+    color: #888;
+    line-height: 1;
+}
+
+.custom-lists-heading {
+    margin: 30px 8px 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #777;
+}
+
+/* =========================================
+   MOBILE DISPLAY LIST PAGE
+   ========================================= */
+
+@media screen and (max-width: 768px) {
+
+    /* Hide desktop list sidebar.
+       Mobile users already have My Lists in bottom nav. */
+    .list-sidebar {
+        display: none;
+    }
+
+    /* Let the main list content use the full screen */
+    .display-list-layout {
+        display: block;
+        width: 100%;
+    }
+
+    .display-list-layout .content {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 25px 16px 100px;
+        box-sizing: border-box;
+    }
+
+    /* List title */
+    .display-list-layout .content h1 {
+        font-size: 30px;
+        line-height: 1.2;
+        margin: 0 0 25px;
+    }
+
+    /* Stop the desktop table from trying to squeeze
+       all eight columns onto the phone */
+    #bookTable,
+    #bookTable thead,
+    #bookTable tbody,
+    #bookTable tr,
+    #bookTable th,
+    #bookTable td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Desktop column headings aren't useful on cards */
+    #bookTable thead {
+        display: none;
+    }
+
+    /* Each book becomes its own card */
+    #bookTable tbody tr {
+        margin-bottom: 24px;
+        padding: 18px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+    }
+
+    /* Remove desktop table borders */
+    #bookTable td {
+        border: none;
+        padding: 6px 0;
+    }
+
+    /* Book cover */
+    #bookTable td img {
+        display: block;
+        width: 110px;
+        height: auto;
+        margin: 0 auto 15px;
+    }
+
+    /* Inputs/selects used for moving books */
+    #bookTable select,
+    #bookTable input {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* Hide mobile labels on desktop */
+.mobile-field-label {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+
+    /* Book card */
+    #bookTable tbody tr {
+        position: relative;
+        padding: 20px;
+    }
+
+    /* Cover */
+    #bookTable .book-cover-cell {
+        padding-bottom: 12px;
+    }
+
+    #bookTable .list-book-cover {
+        display: block;
+        width: 110px;
+        height: auto;
+        max-height: 180px;
+        object-fit: contain;
+        margin: 0 auto;
+    }
+
+    /* Title */
+    #bookTable .book-title-cell {
+        font-size: 22px;
+        font-weight: 600;
+        text-align: center;
+        padding-top: 5px;
+    }
+
+    /* Author */
+    #bookTable .book-author-cell {
+        font-size: 16px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* We already know which list we're viewing */
+    #bookTable .current-list-cell {
+        display: none;
+    }
+
+    /* Labels */
+    #bookTable .mobile-field-label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 13px;
+        color: #777;
+    }
+
+    /* Dates */
+    #bookTable .date-finished-cell,
+    #bookTable .date-added-cell {
+        margin-top: 14px;
+    }
+
+    #bookTable .date-finished-cell form {
+        margin-top: 8px;
+    }
+
+    /* Move controls */
+    #bookTable .move-book-cell {
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid #eee;
+    }
+
+    #bookTable .move-book-cell select,
+    #bookTable .move-book-cell input {
+        display: block;
+        width: 100%;
+        height: 42px;
+        margin-bottom: 8px;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+
+    #bookTable .move-book-cell button {
+        width: 100%;
+        height: 42px;
+    }
+
+    /* Remove */
+    #bookTable .remove-book-cell {
+        margin-top: 10px;
+    }
+
+    #bookTable .remove-book-cell button {
+        width: 100%;
+        min-height: 42px;
+    }
+
+    #bookTable .book-list-card td {
+        display: block;
+        width: 100%;
+        max-width: none;
+        box-sizing: border-box;
+        border: none;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #bookTable .book-list-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Cover */
+    #bookTable .book-cover-cell {
+        order: 1;
+    }
+
+    /* Title */
+    #bookTable .book-title-cell {
+        order: 2;
+    }
+
+    /* Author */
+    #bookTable .book-author-cell {
+        order: 3;
+    }
+
+    /* Date finished */
+    #bookTable .date-finished-cell {
+        order: 4;
+    }
+
+    /* Date added */
+    #bookTable .date-added-cell {
+        order: 5;
+    }
+
+    /* Current list */
+    #bookTable .current-list-cell {
+        order: 6;
+    }
+
+    /* Move controls */
+    #bookTable .move-book-cell {
+        order: 7;
+    }
+
+    /* Remove */
+    #bookTable .remove-book-cell {
+        order: 8;
+    }
+
+    /* =========================================
+   MOBILE LIST CARD - DETAILS
+   ========================================= */
+
+    /* Give each card comfortable spacing */
+    #bookTable .book-list-card {
+        padding: 22px;
+    }
+
+    /* Title */
+    #bookTable .book-title-cell {
+        font-size: 24px;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+
+    /* Author */
+    #bookTable .book-author-cell {
+        font-size: 18px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Cover */
+    #bookTable .book-cover-cell {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    #bookTable .book-cover-cell img {
+        width: 110px;
+        max-width: 110px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    /* Date/details sections */
+    #bookTable .date-finished-cell,
+    #bookTable .date-added-cell,
+    #bookTable .current-list-cell,
+    #bookTable .move-book-cell,
+    #bookTable .remove-book-cell {
+        text-align: left;
+        margin-top: 16px;
+    }
+
+    /* Small gray labels */
+    #bookTable .mobile-field-label {
+        display: block;
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 3px;
+    }
+
+    /* Date finished controls */
+    #bookTable .date-finished-cell form {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+        align-items: center;
+    }
+
+    #bookTable .date-finished-cell input[type="date"] {
+        flex: 1;
+        min-width: 0;
+        height: 40px;
+        box-sizing: border-box;
+    }
+
+    #bookTable .date-finished-cell button {
+        height: 40px;
+        white-space: nowrap;
+    }
+
+    /* Move controls */
+    #bookTable .move-book-cell form {
+        margin-top: 8px;
+    }
+
+    #bookTable .move-book-cell select,
+    #bookTable .move-book-cell input {
+        display: block;
+        width: 100%;
+        height: 44px;
+        margin-bottom: 8px;
+        box-sizing: border-box;
+    }
+
+    #bookTable .move-book-cell button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    /* Separate Remove slightly from Move */
+    #bookTable .remove-book-cell {
+        margin-top: 14px;
+    }
+
+    #bookTable .remove-book-cell button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    /* The page title already tells us which list this is */
+    #bookTable .book-list-card .current-list-cell {
+        display: none;
+    }
+}
+
+/* =========================================
+   MOBILE BOTTOM NAVIGATION
+   ========================================= */
+
+/* Hidden on desktop */
+.mobile-bottom-nav {
+    display: none;
+}
+
+/* Visible on phones */
+@media screen and (max-width: 768px) {
+
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        height: 60px;
+        background: white;
+        border-top: 1px solid #ddd;
+
+        z-index: 1000;
+    }
+
+    .mobile-bottom-nav a {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        font-size: 13px;
+        padding: 20px 2px;
+    }
+}
+
+
+/* =========================================
+   MOBILE BOOK SEARCH RESULTS
+   ========================================= */
+
+@media screen and (max-width: 768px) {
+
+
+
+    /* Search results use the full available width */
+    .results-list {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Each search result becomes a vertical card */
+    .result-item {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        box-sizing: border-box;
+
+        margin-bottom: 24px;
+        padding: 20px;
+
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+    }
+
+    /* Cover */
+    .result-image {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+
+    .result-image form {
+        margin: 0;
+    }
+
+    .result-image #book-image_search {
+        display: block;
+        width: auto;
+        max-width: 140px;
+        height: auto;
+        max-height: 210px;
+        margin: 0 auto;
+        object-fit: contain;
+    }
+
+    /* Let title/author/description use the entire card width */
+    .result-info {
+        width: 100%;
+        max-width: none;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .result-info .book-title {
+        margin: 0 0 8px;
+        font-size: 22px;
+        line-height: 1.25;
+        font-weight: 600;
+    }
+
+    .result-info .book-author {
+        margin: 0 0 16px;
+        font-size: 16px;
+        line-height: 1.4;
+        color: #666;
+    }
+
+    /* Description goes underneath instead of beside the cover */
+    .result-info .book-description {
+        width: 100%;
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.5;
+        text-align: left;
+        overflow-wrap: break-word;
+    }
+}
+
+.list-page-title {
+    text-transform: capitalize;
+}
+
+@media screen and (max-width: 768px) {
+
+    .header > a,
+    .header > form {
+        display: none;
+    }
+
 }

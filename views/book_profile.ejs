@@ -90,7 +90,7 @@
 
 
 
-
+</div>
 
     <main class="book-profile-page">
 
@@ -299,10 +299,49 @@
 <!-- Your web-app is https, so your scripts need to be too -->
 
 
+<div class="mobile-bottom-nav">
+
+    <a href="/home">Home</a>
+
+    <% if (isAuthenticated) { %>
+        <a href="/profile">My Lists</a>
+    <% } else { %>
+        <a href="/login">My Lists</a>
+    <% } %>
+
+    <a href="#" id="mobileSearchLink">Search</a>
+
+    <% if (isAuthenticated) { %>
+        <a href="/profile">Profile</a>
+    <% } else { %>
+        <a href="/login">Profile</a>
+    <% } %>
+
+    <a href="/contact">More</a>
+
+</div>
 
 
+<script>
+    document.addEventListener("click", function (event) {
+        if (event.target.id === "mobileSearchLink") {
+            event.preventDefault();
 
+            const searchInput = document.getElementById("findBook");
 
+            if (searchInput) {
+                searchInput.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+                setTimeout(function () {
+                    searchInput.focus();
+                }, 300);
+            }
+        }
+    });
+</script>
 
 
 

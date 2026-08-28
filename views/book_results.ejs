@@ -71,17 +71,17 @@
 
             <div class="result-item">
                 <div class="result-image">
-                    <form id="fiction" method="get" action="/book_profile/<%= encodeURIComponent(b.volumeInfo.title) %>&<%= encodeURIComponent(b.volumeInfo.authors.join(', ')) %>">
+                    <form id="fiction"
+                          method="get"
+                          action="/book_profile/<%= encodeURIComponent(b.volumeInfo.title) %>&<%= encodeURIComponent(b.volumeInfo.authors.join(', ')) %>">
 
+                        <input id="book-image_search"
+                               type="image"
+                               src="<%= b.volumeInfo.imageLinks === undefined ? '' : b.volumeInfo.imageLinks.thumbnail %>"
+                               alt="<%= b.volumeInfo.title %>">
 
-
-
-            <input id="book-image_search" type="image"
-                   src =  <%=b.volumeInfo.imageLinks === undefined ? " " : b.volumeInfo.imageLinks.thumbnail   %> >
-
-
-        </div>
-
+                    </form>
+                </div>
 
         </form>
                 <div class="result-info">
@@ -109,12 +109,52 @@
 
 </div>
 
+<nav class="mobile-bottom-nav">
+
+    <a href="/home" class="mobile-nav-item">
+        <span>Home</span>
+    </a>
+
+    <a href="/profile" class="mobile-nav-item">
+        <span>My Lists</span>
+    </a>
+
+    <a href="#nav" class="mobile-nav-item" id="mobileSearchLink">
+        <span>Search</span>
+    </a>
+
+    <a href="/profile" class="mobile-nav-item">
+        <span>Profile</span>
+    </a>
+
+    <a href="/more" class="mobile-nav-item">
+        <span>More</span>
+    </a>
+
+</nav>
 
 <div id = "footer">
 
 </div>
 
 
+<script>
+    document.getElementById("mobileSearchLink")?.addEventListener("click", function (event) {
+        event.preventDefault();
 
+        const searchInput = document.getElementById("findBook");
+
+        if (searchInput) {
+            searchInput.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            setTimeout(function () {
+                searchInput.focus();
+            }, 300);
+        }
+    });
+</script>
 </body>
 </html>

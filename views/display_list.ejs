@@ -109,7 +109,7 @@
 
     <main class="content">
 
-        <h1><%= message %></h1>
+        <h1 class="list-page-title"><%= listName %></h1>
 
         <% if (movedBook && destination) { %>
             <p>
@@ -143,72 +143,103 @@
             </tr>
             </thead>
             <tbody id="bookTableBody">
-            <%list_books.forEach(function(b) { %>
-                <tr>
-                    <td><%= b.book_name %></td>
-                    <td><%= b.book_author %></td>
-                    <td>        <% if (b.book_name !== undefined && b.book_author !== undefined) { %>
+            <% list_books.forEach(function(b) { %>
+                <tr class="book-list-card">
 
-                        <form id="fiction" method="post" action= "/book_profile/<%=b.book_name%>&<%=b.book_author%>">
+                    <td class="book-title-cell">
+                        <%= b.book_name %>
+                    </td>
 
+                    <td class="book-author-cell">
+                        <%= b.book_author %>
+                    </td>
 
+                    <td class="book-cover-cell">
+                        <% if (b.book_name !== undefined && b.book_author !== undefined) { %>
 
+                        <form method="post"
+                              action="/book_profile/<%=b.book_name%>&<%=b.book_author%>">
 
                             <input
-                                    id="book-image_search"
+                                    class="list-book-cover"
                                     type="image"
                                     src="<%= b.book_image || '/images/no-cover.png' %>"
                                     alt="<%= b.book_name %>"
                                     onerror="this.onerror=null; this.src='/images/no-cover.png';"
-                                    style="width: 100%; max-width: 110px; height: auto; max-height: 180px; object-fit: contain; display: block; margin: 0 auto;"
                             >
-
-
-
-
 
                         </form>
 
-                        <% }%>
-
-
-
+                        <% } %>
                     </td>
-                    <td id="dateFinished-<%= b.book_name %>">
+
+                    <td class="date-finished-cell" id="dateFinished-<%= b.book_name %>">
+
+                        <span class="mobile-field-label">Date finished</span>
+
                         <%= b.date_finished.toLocaleDateString() %>
 
                         <form id="changeDateForm-<%= b.book_name %>"
                               data-list-name="<%= listName %>"
                               data-book-name="<%= b.book_name %>"
                               onsubmit="return changeDate(this.dataset.listName, this.dataset.bookName);">
-                            <input type="date" name="newDate" id="newDateInput" required>
+
+                            <input type="date" name="newDate" required>
                             <button type="submit">Change Date</button>
                         </form>
                     </td>
-                    <td><%= b.date_added.toLocaleDateString() %></td>
-                    <td><%= b.list_name %></td>
-                    <td>
-                        <form method="post" action="/moveBook/<%= b.list_name %>&<%= b.book_name %>&<%= b.book_author%>">
-                            <select name="targetList">
+
+                    <td class="date-added-cell">
+                        <span class="mobile-field-label">Date added</span>
+                        <%= b.date_added.toLocaleDateString() %>
+                    </td>
+
+                    <td class="current-list-cell">
+                        <span class="mobile-field-label">Current list</span>
+                        <%= b.list_name %>
+                    </td>
+
+                    <td class="move-book-cell">
+
+                        <span class="mobile-field-label">Move to</span>
+
+                        <form method="post"
+                              action="/moveBook/<%= b.list_name %>&<%= b.book_name %>&<%= b.book_author%>">
+
+                            <select name="targetList" class="move-list-select">
                                 <% userContext.lists.forEach(function(list) { %>
                                     <% if (list !== b.list_name) { %>
                                         <option value="<%= list %>"><%= list %></option>
                                     <% } %>
                                 <% }); %>
+
                                 <option value="__new__">New list...</option>
                             </select>
-                            <input type="text" name="newListName" placeholder="New list name (if selected)">
+
+                            <input
+                                    type="text"
+                                    name="newListName"
+                                    class="new-list-name-input"
+                                    placeholder="New list name"
+                                    style="display: none;"
+                            >
+
                             <button type="submit">Move</button>
                         </form>
                     </td>
 
-                    <td>
-                        <form method="post" action="/deleteBook/<%=listName%>&<%=b.book_name%>"
+                    <td class="remove-book-cell">
+                        <form method="post"
+                              action="/deleteBook/<%=listName%>&<%=b.book_name%>"
                               onsubmit="return confirm('Do you really want to remove the book?');">
 
-                            <button type="submit" class="btn btn-link nav-item nav-link">Remove</button>
+                            <button type="submit"
+                                    class="btn btn-link nav-item nav-link">
+                                Remove
+                            </button>
                         </form>
                     </td>
+
                 </tr>
             <% }); %>
             </tbody>
@@ -275,6 +306,70 @@
     }
 </script>
 
+<script>
+    document.addEventListener("change", function (event) {
+
+        if (!event.target.classList.contains("move-list-select")) {
+            return;
+        }
+
+        const form = event.target.closest("form");
+        const newListInput = form.querySelector(".new-list-name-input");
+
+        if (event.target.value === "__new__") {
+            newListInput.style.display = "block";
+            newListInput.required = true;
+            newListInput.focus();
+        } else {
+            newListInput.style.display = "none";
+            newListInput.required = false;
+            newListInput.value = "";
+        }
+    });
+</script>
+
+
+
+<nav class="mobile-bottom-nav">
+    <a href="/home" class="mobile-nav-item">
+        <span>Home</span>
+    </a>
+
+    <a href="/profile" class="mobile-nav-item">
+        <span>My Lists</span>
+    </a>
+
+    <a href="#nav" class="mobile-nav-item" id="mobileSearchLink">
+        <span>Search</span>
+    </a>
+
+    <a href="/profile" class="mobile-nav-item">
+        <span>Profile</span>
+    </a>
+
+    <a href="#" class="mobile-nav-item">
+        <span>More</span>
+    </a>
+</nav>
+
+<script>
+    document.getElementById("mobileSearchLink")?.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        const searchInput = document.getElementById("findBook");
+
+        if (searchInput) {
+            searchInput.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            setTimeout(function () {
+                searchInput.focus();
+            }, 300);
+        }
+    });
+</script>
 
 </body>
 
