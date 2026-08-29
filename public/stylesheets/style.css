@@ -1747,4 +1747,9 @@ a.list-link:hover {
         display: none;
     }
 
+    .list-row-button {
+        color: #111;
+        -webkit-text-fill-color: #111;
+    }
+
 }
